@@ -885,7 +885,8 @@ function EvolucionPanel({
     };
   });
   const maxIng = Math.max(...data.map(d => Math.max(d.ingresos, d.pptoIngresos || 0)));
-  const maxEbi = Math.max(...data.map(d => Math.max(d.ebitda, d.ppto || 0)));
+  const maxEbi = Math.max(...data.map(d => Math.max(d.ebitda, d.ppto || 0, 0)));
+  const minEbi = Math.min(...data.map(d => Math.min(d.ebitda, d.ppto || 0, 0)));
 
   // Stats strip (totales del rango visible)
   const sumIngReal = data.filter(d => d.isReal).reduce((a, d) => a + d.ingresos, 0);
@@ -1102,6 +1103,7 @@ function EvolucionPanel({
   }, "\u25A1 PPTO")), /*#__PURE__*/React.createElement(DualBarChartV2, {
     data: data,
     maxY: maxEbi,
+    minY: minEbi,
     currency: currency
   })), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1291,74 +1293,121 @@ function BarChartV2({
 function DualBarChartV2({
   data,
   maxY,
+  minY,
   currency
 }) {
-  const H = 200;
-  const PAD = 32;
+  const H = 220;
+  const PAD_T = 20;
+  const PAD_B = 40;
+  const PAD_X = 32;
   const W = 1000;
-  const barW = (W - PAD * 2) / data.length;
+  const totalH = H + PAD_T + PAD_B;
+  const chartH = H; // altura útil para datos
+  const range = maxY - minY || 1;
+  // posición Y del cero dentro del área de dibujo
+  const yZero = PAD_T + maxY / range * chartH;
+  const toY = v => PAD_T + (maxY - v) / range * chartH;
+  const barW = (W - PAD_X * 2) / data.length;
+
+  // Gridlines: 0, mitad positiva, máximo, mitad negativa (si aplica)
+  const gridVals = [maxY, maxY / 2, 0, minY < 0 ? minY / 2 : null, minY < 0 ? minY : null].filter(v => v !== null);
   return /*#__PURE__*/React.createElement("svg", {
-    viewBox: `0 0 ${W} ${H + 50}`,
+    viewBox: `0 0 ${W} ${totalH}`,
     style: {
       width: '100%',
       display: 'block'
     }
-  }, [0, 0.5, 1].map(t => /*#__PURE__*/React.createElement("line", {
-    key: t,
-    x1: PAD,
-    x2: W - PAD,
-    y1: H - H * t + 10,
-    y2: H - H * t + 10,
-    stroke: TPAL_A.border,
-    strokeWidth: 1,
-    strokeDasharray: t === 0 ? '' : '2,3'
-  })), (() => {
+  }, gridVals.map((v, i) => {
+    const y = toY(v);
+    const isZero = v === 0;
+    return /*#__PURE__*/React.createElement("g", {
+      key: i
+    }, /*#__PURE__*/React.createElement("line", {
+      x1: PAD_X,
+      x2: W - PAD_X,
+      y1: y,
+      y2: y,
+      stroke: isZero ? '#475569' : TPAL_A.border,
+      strokeWidth: isZero ? 1.2 : 0.8,
+      strokeDasharray: isZero ? '' : '2,4'
+    }), /*#__PURE__*/React.createElement("text", {
+      x: PAD_X - 4,
+      y: y + 4,
+      fill: TPAL_A.textMute,
+      fontSize: 8,
+      fontFamily: "DM Mono",
+      textAnchor: "end"
+    }, Math.round(v / 1000), "k"));
+  }), (() => {
     const idxFC = data.findIndex(d => !d.isReal);
     if (idxFC < 0) return null;
-    const x = PAD + idxFC * barW;
+    const x = PAD_X + idxFC * barW;
     return /*#__PURE__*/React.createElement("line", {
       x1: x,
       x2: x,
-      y1: 5,
-      y2: H + 10,
+      y1: PAD_T,
+      y2: PAD_T + chartH,
       stroke: TPAL_A.amberDim,
       strokeWidth: 1,
       strokeDasharray: "3,4"
     });
   })(), data.map((d, i) => {
-    const hReal = Math.max(0, d.ebitda) / maxY * H;
-    const hPpto = d.ppto ? Math.max(0, d.ppto) / maxY * H : 0;
-    const x = PAD + i * barW + 3;
+    const x = PAD_X + i * barW + 3;
     const w = (barW - 6) / 2 - 1;
+    const xPpto = x + w + 2;
+
+    // Barra REAL/FC
+    const yReal = toY(Math.max(d.ebitda, 0));
+    const yRealBot = toY(Math.min(d.ebitda, 0));
+    const hReal = Math.abs(yRealBot - yReal);
+    const realIsNeg = d.ebitda < 0;
+
+    // Barra PPTO
+    const yPpto = d.ppto != null ? toY(Math.max(d.ppto, 0)) : null;
+    const yPptoBot = d.ppto != null ? toY(Math.min(d.ppto, 0)) : null;
+    const hPpto = yPpto != null ? Math.abs(yPptoBot - yPpto) : 0;
+    const pptoIsNeg = d.ppto != null && d.ppto < 0;
+    const barColor = realIsNeg ? TPAL_A.red : d.isReal ? TPAL_A.green : TPAL_A.greenDim;
     return /*#__PURE__*/React.createElement("g", {
       key: i
     }, /*#__PURE__*/React.createElement("rect", {
       x: x,
-      y: H - hReal + 10,
+      y: Math.min(yReal, yRealBot),
       width: w,
-      height: hReal,
-      fill: d.isReal ? TPAL_A.green : TPAL_A.greenDim,
-      opacity: d.isReal ? 0.95 : 0.5,
-      stroke: d.isReal ? 'none' : TPAL_A.green,
+      height: Math.max(hReal, 1),
+      fill: barColor,
+      opacity: d.isReal ? 0.9 : 0.45,
+      stroke: d.isReal ? 'none' : realIsNeg ? TPAL_A.red : TPAL_A.green,
       strokeWidth: d.isReal ? 0 : 1,
       strokeDasharray: d.isReal ? '' : '2,2'
-    }), d.ppto && /*#__PURE__*/React.createElement("rect", {
-      x: x + w + 2,
-      y: H - hPpto + 10,
+    }), /*#__PURE__*/React.createElement("text", {
+      x: x + w / 2,
+      y: realIsNeg ? yRealBot + 10 : Math.min(yReal, yRealBot) - 3,
+      fill: barColor,
+      fontSize: 7.5,
+      fontFamily: "DM Mono",
+      textAnchor: "middle"
+    }, Math.abs(d.ebitda) >= 100 ? (realIsNeg ? '-' : '') + Math.round(Math.abs(d.ebitda) / 1000) + 'k' : ''), d.ppto != null && /*#__PURE__*/React.createElement("rect", {
+      x: xPpto,
+      y: Math.min(yPpto, yPptoBot),
       width: w,
-      height: hPpto,
+      height: Math.max(hPpto, 1),
       fill: "none",
-      stroke: TPAL_A.cyan,
+      stroke: pptoIsNeg ? '#7dd3fc' : TPAL_A.cyan,
       strokeWidth: 1.5,
       strokeDasharray: "2,2"
     }), /*#__PURE__*/React.createElement("text", {
       x: x + (barW - 6) / 2,
-      y: H + 24,
+      y: PAD_T + chartH + 16,
       fill: TPAL_A.textDim,
-      fontSize: 9,
+      fontSize: 8.5,
       fontFamily: "DM Mono",
       textAnchor: "middle"
-    }, FA.MONTH_NAMES_ES[parseInt(d.m.split('-')[1]) - 1]));
+    }, FA.MONTH_NAMES_ES[parseInt(d.m.split('-')[1]) - 1], /*#__PURE__*/React.createElement("tspan", {
+      fontSize: 7,
+      fill: TPAL_A.textMute,
+      dy: 0
+    }, d.m.startsWith('2026') ? '·26' : '·25')));
   }));
 }
 function SparkLineV2({
