@@ -3465,7 +3465,8 @@ function VariantA() {
       gap: 16
     }
   }, /*#__PURE__*/React.createElement(NotesPanel, {
-    comments: comments
+    comments: comments,
+    period: period
   }), /*#__PURE__*/React.createElement(ExportPanel, {
     currency: currency,
     period: period
@@ -3511,10 +3512,111 @@ function VariantA() {
     setAcciones: setAcciones
   })));
 }
+
+// ─── Auto-note generator ───────────────────────────────────────────────
+function generateAutoNotes(period) {
+  const {
+    real,
+    ppto,
+    lastYr,
+    info
+  } = getAggregates(period);
+  const label = info.label;
+  const F = window.QB_FMT;
+  const months = info.real;
+  const fmtM = v => F.fmtMoney(v, 'USD', months);
+  const fmtP = (v, sign = false) => F.fmtPct(v, 1, sign);
+  const vPpto = (r, p) => F.variance(r, p);
+  const vYA = (r, y) => y !== null && y !== undefined ? F.variance(r, y) : null;
+  const dir = (v, invert = false) => {
+    const good = invert ? v.abs <= 0 : v.abs >= 0;
+    return good ? '▲ favor' : '▼ contra';
+  };
+  const pLabel = (v, invert = false) => {
+    const good = invert ? v.abs <= 0 : v.abs >= 0;
+    const pct = Math.abs(v.pct * 100).toFixed(1);
+    return (good ? '+' : '-') + pct + '% vs Ppto';
+  };
+  const yaLabel = (v, invert = false) => {
+    if (!v) return null;
+    const good = invert ? v.abs <= 0 : v.abs >= 0;
+    const pct = Math.abs(v.pct * 100).toFixed(1);
+    return (good ? '+' : '-') + pct + '% vs año ant.';
+  };
+  const notes = {};
+
+  // Ingresos
+  const vI = vPpto(real.ingresos, ppto.ingresos);
+  const yaI = vYA(real.ingresos, lastYr === null || lastYr === void 0 ? void 0 : lastYr.ingresos);
+  notes.ingresos = `${label} · Ingresos: ${fmtM(real.ingresos)} (${pLabel(vI)}${yaI ? ' · ' + yaLabel(yaI) : ''}). ` + (vI.abs >= 0 ? 'Ventas por sobre presupuesto, favorecido por volumen y/o precio.' : 'Ventas bajo presupuesto — revisar mix de producto y precio realizado.');
+
+  // Costo de ventas
+  const vC = vPpto(real.costoVentas, ppto.costoVentas);
+  const cvPct = real.ingresos ? (-real.costoVentas / real.ingresos * 100).toFixed(1) : '—';
+  const cvPptoPct = ppto.ingresos ? (-ppto.costoVentas / ppto.ingresos * 100).toFixed(1) : '—';
+  notes.costoVentas = `Costo de ventas: ${fmtM(-real.costoVentas)} (${cvPct}% de ingresos vs ${cvPptoPct}% Ppto). ` + (vC.abs <= 0 ? 'Costo menor al presupuesto — dilución por mayor volumen o eficiencia operacional.' : 'Costo sobre Ppto — analizar MP, energía y eficiencia por tonelada.');
+
+  // Margen bruto
+  const vMB = vPpto(real.margenBruto, ppto.margenBruto);
+  const mbPct = (real.margenBrutoPct * 100).toFixed(1);
+  const mbPptoPct = (ppto.margenBrutoPct * 100).toFixed(1);
+  notes.margenBruto = `Margen Bruto: ${fmtM(real.margenBruto)} · ${mbPct}% (Ppto: ${mbPptoPct}%). ` + (vMB.abs >= 0 ? 'Margen sobre presupuesto — resultado operativo favorable.' : `Margen bajo Ppto en ${fmtM(Math.abs(vMB.abs))} — presión combinada de ingresos y/o costo.`);
+
+  // Gastos admin
+  const vGA = vPpto(real.gastosAdmin, ppto.gastosAdmin);
+  notes.gastosAdmin = `G. Administración: ${fmtM(-real.gastosAdmin)} (${pLabel(vGA, true)}). ` + (vGA.abs <= 0 ? 'Bajo Ppto — menor ejecución de honorarios, TI o gastos generales.' : 'Sobre Ppto — revisar conceptos: honorarios, arriendos o gastos extraordinarios.');
+
+  // Gastos ventas
+  const vGV = vPpto(real.gastosVentas, ppto.gastosVentas);
+  notes.gastosVentas = `G. de Venta: ${fmtM(-real.gastosVentas)} (${pLabel(vGV, true)}). ` + (vGV.abs <= 0 ? 'Ejecución bajo presupuesto.' : 'Sobre presupuesto — verificar fletes, comisiones o gastos comerciales.');
+
+  // EBITDA
+  const vEB = vPpto(real.ebitda, ppto.ebitda);
+  const ebPct = (real.ebitdaPct * 100).toFixed(1);
+  const ebPptoPct = (ppto.ebitdaPct * 100).toFixed(1);
+  const yaEB = vYA(real.ebitda, lastYr === null || lastYr === void 0 ? void 0 : lastYr.ebitda);
+  notes.ebitda = `EBITDA: ${fmtM(real.ebitda)} · ${ebPct}% (Ppto: ${ebPptoPct}%). ${pLabel(vEB)}${yaEB ? ' · ' + yaLabel(yaEB) : ''}. ` + (vEB.abs >= 0 ? 'Generación operacional por sobre objetivo.' : 'EBITDA bajo Ppto — analizar mix ingresos/costo antes de proyectar cierre de año.');
+
+  // Resultado operacional
+  const vRO = vPpto(real.resOperacional, ppto.resOperacional);
+  notes.resOperacional = `Res. Operacional: ${fmtM(real.resOperacional)} (${pLabel(vRO)}). ` + (vRO.abs >= 0 ? 'Operación sobre Ppto, incluyendo depreciación.' : 'Bajo Ppto después de depreciación — evaluar recuperación en meses restantes.');
+
+  // Diferencia de cambio
+  const vDC = vPpto(real.difCambio, ppto.difCambio);
+  const tcAvg = months.reduce((a, m) => a + (DA.TC[m] || 940), 0) / months.length;
+  notes.difCambio = `Dif. de cambio: ${fmtM(real.difCambio)}. TC promedio período: ${tcAvg.toFixed(0)} CLP/USD. ` + (real.difCambio >= 0 ? 'Impacto positivo por revaluación de activos/pasivos en CLP.' : 'Impacto negativo — depreciación del CLP presiona deudas denominadas en USD.');
+
+  // Gastos financieros
+  const vGF = vPpto(real.gastosFin, ppto.gastosFin);
+  notes.gastosFin = `Gastos financieros: ${fmtM(-real.gastosFin)} (${pLabel(vGF, true)}). ` + (vGF.abs <= 0 ? 'Dentro o bajo presupuesto de intereses y comisiones.' : 'Sobre Ppto — revisar nivel de deuda financiera y costo promedio.');
+
+  // Utilidad
+  const vU = vPpto(real.utilidad, ppto.utilidad);
+  const yaU = vYA(real.utilidad, lastYr === null || lastYr === void 0 ? void 0 : lastYr.utilidad);
+  const uPct = (real.utilidadPct * 100).toFixed(1);
+  notes.utilidad = `Utilidad del ejercicio: ${fmtM(real.utilidad)} · ${uPct}% margen neto. ${pLabel(vU)}${yaU ? ' · ' + yaLabel(yaU) : ''}. ` + (vU.abs >= 0 ? 'Resultado positivo respecto al objetivo — buena absorción de costos y gastos.' : 'Bajo Ppto — resultado presionado por margen operacional y/o resultado no operacional.');
+  return notes;
+}
 function NotesPanel({
-  comments
+  comments,
+  period
 }) {
-  const filled = Object.entries(comments).filter(([, v]) => v && v.trim());
+  const [mode, setMode] = useStateA('auto');
+  const autoNotes = useMemoA(() => generateAutoNotes(period), [period]);
+  const displayNotes = mode === 'auto' ? autoNotes : comments;
+  const filled = Object.entries(displayNotes).filter(([, v]) => v && v.trim());
+  const LINE_LABELS = {
+    ingresos: 'INGRESOS',
+    costoVentas: 'COSTO DE VENTAS',
+    margenBruto: 'MARGEN BRUTO',
+    gastosAdmin: 'G. ADMINISTRACIÓN',
+    gastosVentas: 'G. DE VENTA',
+    ebitda: 'EBITDA',
+    resOperacional: 'RES. OPERACIONAL',
+    difCambio: 'DIF. DE CAMBIO',
+    gastosFin: 'GASTOS FINANCIEROS',
+    utilidad: 'UTILIDAD'
+  };
   return /*#__PURE__*/React.createElement("div", {
     style: {
       background: TPAL_A.panel,
@@ -3526,13 +3628,15 @@ function NotesPanel({
       borderBottom: `1px solid ${TPAL_A.borderHi}`,
       fontFamily: 'DM Mono',
       fontSize: 11,
-      color: TPAL_A.text
+      color: TPAL_A.text,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
       color: TPAL_A.amber,
-      fontWeight: 700,
-      marginRight: 8
+      fontWeight: 700
     }
   }, '>'), /*#__PURE__*/React.createElement("span", {
     style: {
@@ -3540,15 +3644,41 @@ function NotesPanel({
     }
   }, "NOTAS DEL CFO"), /*#__PURE__*/React.createElement("span", {
     style: {
-      color: TPAL_A.textMute,
-      marginLeft: 8
+      color: TPAL_A.textMute
     }
-  }, "\xB7 ", filled.length)), /*#__PURE__*/React.createElement("div", {
+  }, "\xB7 ", filled.length), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }), ['auto', 'manual'].map(m => /*#__PURE__*/React.createElement("button", {
+    key: m,
+    onClick: () => setMode(m),
+    style: {
+      background: mode === m ? TPAL_A.amber : 'transparent',
+      color: mode === m ? TPAL_A.bg : TPAL_A.textMute,
+      border: `1px solid ${mode === m ? TPAL_A.amber : TPAL_A.border}`,
+      fontFamily: 'DM Mono',
+      fontSize: 9,
+      padding: '2px 7px',
+      cursor: 'pointer',
+      letterSpacing: 0.6
+    }
+  }, m.toUpperCase()))), mode === 'auto' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '6px 14px 4px',
+      fontFamily: 'DM Mono',
+      fontSize: 9.5,
+      color: TPAL_A.cyan,
+      borderBottom: `1px solid ${TPAL_A.border}`
+    }
+  }, "\u26A1 Generado autom\xE1ticamente en base a datos del per\xEDodo seleccionado"), /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '14px',
       display: 'flex',
       flexDirection: 'column',
-      gap: 14
+      gap: 14,
+      maxHeight: 420,
+      overflowY: 'auto'
     }
   }, filled.length === 0 && /*#__PURE__*/React.createElement("span", {
     style: {
@@ -3556,7 +3686,7 @@ function NotesPanel({
       fontFamily: 'DM Mono',
       fontSize: 11
     }
-  }, "Sin notas. Click [+] en cualquier l\xEDnea del EERR."), filled.map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+  }, mode === 'manual' ? 'Sin notas. Click [+] en cualquier línea del EERR.' : 'Sin datos para el período.'), filled.map(([k, v]) => /*#__PURE__*/React.createElement("div", {
     key: k
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3566,12 +3696,12 @@ function NotesPanel({
       letterSpacing: 0.8,
       marginBottom: 5
     }
-  }, k.toUpperCase()), /*#__PURE__*/React.createElement("div", {
+  }, LINE_LABELS[k] || k.toUpperCase()), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: 'DM Sans',
-      fontSize: 13,
+      fontSize: 12.5,
       color: TPAL_A.text,
-      lineHeight: 1.55
+      lineHeight: 1.6
     }
   }, v)))));
 }
