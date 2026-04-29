@@ -153,219 +153,43 @@ const gastosFin     = {
   "2026-03": 191
 };
 
+// Volumen de venta en toneladas — fuente: Excel H1 sheet, filas AB/GLX/Otros
 const volumen       = {
-  "2025-01": {
-    "acido_borico": 8174,
-    "granulex": 2120,
-    "otros": 0,
-    "total": 10294
-  },
-  "2025-02": {
-    "acido_borico": 6371,
-    "granulex": 120,
-    "otros": 0,
-    "total": 6491
-  },
-  "2025-03": {
-    "acido_borico": 7165,
-    "granulex": 343,
-    "otros": 0,
-    "total": 7508
-  },
-  "2025-04": {
-    "acido_borico": 8852,
-    "granulex": 1598,
-    "otros": 0,
-    "total": 10450
-  },
-  "2025-05": {
-    "acido_borico": 8384,
-    "granulex": 2578,
-    "otros": 0,
-    "total": 10962
-  },
-  "2025-06": {
-    "acido_borico": 10649,
-    "granulex": 91,
-    "otros": 0,
-    "total": 10740
-  },
-  "2025-07": {
-    "acido_borico": 8948,
-    "granulex": 2160,
-    "otros": 0,
-    "total": 11108
-  },
-  "2025-08": {
-    "acido_borico": 8755,
-    "granulex": 210,
-    "otros": 0,
-    "total": 8965
-  },
-  "2025-09": {
-    "acido_borico": 10808,
-    "granulex": 274,
-    "otros": 0,
-    "total": 11082
-  },
-  "2025-10": {
-    "acido_borico": 8987,
-    "granulex": 304,
-    "otros": 0,
-    "total": 9291
-  },
-  "2025-11": {
-    "acido_borico": 8456,
-    "granulex": 321,
-    "otros": 0,
-    "total": 8777
-  },
-  "2025-12": {
-    "acido_borico": 7155,
-    "granulex": 156,
-    "otros": 0,
-    "total": 7311
-  },
-  "2026-01": {
-    "acido_borico": 8031,
-    "granulex": 255,
-    "otros": 0,
-    "total": 8286
-  },
-  "2026-02": {
-    "acido_borico": 6918,
-    "granulex": 235,
-    "otros": 660,
-    "total": 7813
-  },
-  "2026-03": {
-    "acido_borico": 9088,
-    "granulex": 140,
-    "otros": 0,
-    "total": 9228
-  }
+  "2025-01": { "acido_borico": 7631, "granulex": 2800, "otros": 0,   "total": 10431 },
+  "2025-02": { "acido_borico": 10205, "granulex": 2100, "otros": 0,  "total": 12305 },
+  "2025-03": { "acido_borico": 10456, "granulex": 2836, "otros": 0,  "total": 13292 },
+  "2025-04": { "acido_borico": 9927,  "granulex": 2876, "otros": 0,  "total": 12803 },
+  "2025-05": { "acido_borico": 9080,  "granulex": 3456, "otros": 0,  "total": 12536 },
+  "2025-06": { "acido_borico": 10701, "granulex": 2224, "otros": 0,  "total": 12925 },
+  "2025-07": { "acido_borico": 9223,  "granulex": 2088, "otros": 0,  "total": 11311 },
+  "2025-08": { "acido_borico": 8803,  "granulex": 2116, "otros": 0,  "total": 10919 },
+  "2025-09": { "acido_borico": 6434,  "granulex": 2220, "otros": 0,  "total": 8654  },
+  "2025-10": { "acido_borico": 7341,  "granulex": 4216, "otros": 0,  "total": 11557 },
+  "2025-11": { "acido_borico": 9074,  "granulex": 2960, "otros": 0,  "total": 12034 },
+  "2025-12": { "acido_borico": 6271,  "granulex": 1700, "otros": 50, "total": 8021  },
+  "2026-01": { "acido_borico": 8031,  "granulex": 255,  "otros": 0,  "total": 8286  },
+  "2026-02": { "acido_borico": 6918,  "granulex": 235,  "otros": 660,"total": 7813  },
+  "2026-03": { "acido_borico": 9088,  "granulex": 140,  "otros": 0,  "total": 9228  },
 };
+// Por producto en kUSD.
+// 2025: estimado proporcional a volumen real (H1 Excel); sin desglose financiero AB/GLX disponible.
+// 2026 Ene-Mar: valores exactos del Excel H1 (filas Ingreso AB/GLX, Costo AB/GLX).
 const porProducto   = {
-  "2025-01": {
-    "ingresoAB": 6371,
-    "ingresoGLX": 789,
-    "costoAB": 5346,
-    "costoGLX": 849,
-    "margenAB": 1026,
-    "margenGLX": -60
-  },
-  "2025-02": {
-    "ingresoAB": 8194,
-    "ingresoGLX": 616,
-    "costoAB": 6790,
-    "costoGLX": 580,
-    "margenAB": 1404,
-    "margenGLX": 36
-  },
-  "2025-03": {
-    "ingresoAB": 8242,
-    "ingresoGLX": 854,
-    "costoAB": 6818,
-    "costoGLX": 635,
-    "margenAB": 1424,
-    "margenGLX": 218
-  },
-  "2025-04": {
-    "ingresoAB": 7938,
-    "ingresoGLX": 856,
-    "costoAB": 6760,
-    "costoGLX": 768,
-    "margenAB": 1179,
-    "margenGLX": 88
-  },
-  "2025-05": {
-    "ingresoAB": 7382,
-    "ingresoGLX": 1072,
-    "costoAB": 6393,
-    "costoGLX": 1035,
-    "margenAB": 988,
-    "margenGLX": 36
-  },
-  "2025-06": {
-    "ingresoAB": 8502,
-    "ingresoGLX": 696,
-    "costoAB": 7200,
-    "costoGLX": 666,
-    "margenAB": 1302,
-    "margenGLX": 29
-  },
-  "2025-07": {
-    "ingresoAB": 7788,
-    "ingresoGLX": 636,
-    "costoAB": 6016,
-    "costoGLX": 644,
-    "margenAB": 1771,
-    "margenGLX": -8
-  },
-  "2025-08": {
-    "ingresoAB": 7281,
-    "ingresoGLX": 649,
-    "costoAB": 5886,
-    "costoGLX": 639,
-    "margenAB": 1396,
-    "margenGLX": 10
-  },
-  "2025-09": {
-    "ingresoAB": 5417,
-    "ingresoGLX": 678,
-    "costoAB": 4504,
-    "costoGLX": 671,
-    "margenAB": 913,
-    "margenGLX": 8
-  },
-  "2025-10": {
-    "ingresoAB": 6329,
-    "ingresoGLX": 1363,
-    "costoAB": 5006,
-    "costoGLX": 1303,
-    "margenAB": 1324,
-    "margenGLX": 60
-  },
-  "2025-11": {
-    "ingresoAB": 7664,
-    "ingresoGLX": 936,
-    "costoAB": 6005,
-    "costoGLX": 889,
-    "margenAB": 1659,
-    "margenGLX": 47
-  },
-  "2025-12": {
-    "ingresoAB": 5230,
-    "ingresoGLX": 523,
-    "costoAB": 4367,
-    "costoGLX": 472,
-    "margenAB": 864,
-    "margenGLX": 51
-  },
-  "2026-01": {
-    "ingresoAB": 6854,
-    "ingresoGLX": 129,
-    "costoAB": 6495,
-    "costoGLX": 82,
-    "margenAB": 359,
-    "margenGLX": 47
-  },
-  "2026-02": {
-    "ingresoAB": 6055,
-    "ingresoGLX": 120,
-    "costoAB": 5383,
-    "costoGLX": 76,
-    "margenAB": 672,
-    "margenGLX": 44
-  },
-  "2026-03": {
-    "ingresoAB": 7969,
-    "ingresoGLX": 71,
-    "costoAB": 6487,
-    "costoGLX": 45,
-    "margenAB": 1482,
-    "margenGLX": 26
-  }
+  "2025-01": { "ingresoAB": 5574,  "ingresoGLX": 2045, "costoAB": 4462, "costoGLX": 1637, "margenAB": 1112,  "margenGLX": 408  },
+  "2025-02": { "ingresoAB": 4433,  "ingresoGLX": 912,  "costoAB": 3759, "costoGLX": 773,  "margenAB": 674,   "margenGLX": 139  },
+  "2025-03": { "ingresoAB": 4784,  "ingresoGLX": 1298, "costoAB": 3932, "costoGLX": 1066, "margenAB": 852,   "margenGLX": 232  },
+  "2025-04": { "ingresoAB": 6218,  "ingresoGLX": 1801, "costoAB": 5320, "costoGLX": 1541, "margenAB": 898,   "margenGLX": 260  },
+  "2025-05": { "ingresoAB": 5846,  "ingresoGLX": 2225, "costoAB": 4916, "costoGLX": 1871, "margenAB": 930,   "margenGLX": 354  },
+  "2025-06": { "ingresoAB": 7696,  "ingresoGLX": 1599, "costoAB": 6546, "costoGLX": 1360, "margenAB": 1150,  "margenGLX": 239  },
+  "2025-07": { "ingresoAB": 6985,  "ingresoGLX": 1581, "costoAB": 5726, "costoGLX": 1296, "margenAB": 1259,  "margenGLX": 285  },
+  "2025-08": { "ingresoAB": 6370,  "ingresoGLX": 1531, "costoAB": 5868, "costoGLX": 1411, "margenAB": 502,   "margenGLX": 120  },
+  "2025-09": { "ingresoAB": 7122,  "ingresoGLX": 2458, "costoAB": 6923, "costoGLX": 2389, "margenAB": 199,   "margenGLX": 69   },
+  "2025-10": { "ingresoAB": 5203,  "ingresoGLX": 2988, "costoAB": 4998, "costoGLX": 2871, "margenAB": 205,   "margenGLX": 117  },
+  "2025-11": { "ingresoAB": 5766,  "ingresoGLX": 1881, "costoAB": 5511, "costoGLX": 1798, "margenAB": 255,   "margenGLX": 83   },
+  "2025-12": { "ingresoAB": 5092,  "ingresoGLX": 1380, "costoAB": 6255, "costoGLX": 1696, "margenAB": -1163, "margenGLX": -316 },
+  "2026-01": { "ingresoAB": 6854,  "ingresoGLX": 129,  "costoAB": 6495, "costoGLX": 82,   "margenAB": 359,   "margenGLX": 47   },
+  "2026-02": { "ingresoAB": 6055,  "ingresoGLX": 120,  "costoAB": 5383, "costoGLX": 76,   "margenAB": 672,   "margenGLX": 44   },
+  "2026-03": { "ingresoAB": 7969,  "ingresoGLX": 71,   "costoAB": 6487, "costoGLX": 45,   "margenAB": 1482,  "margenGLX": 26   },
 };
 
 const ppto2026 = {
@@ -479,16 +303,17 @@ const ppto2026 = {
   }
 };
 
-// Mix por producto y mercados: estimados a partir de volumen real
-// (Ácido bórico ~96% del volumen, Granulex ~3%, Otros ~1%)
+// Mix volumen por producto — promedio YTD 2026 (fuente: Excel H1, toneladas reales)
+// AB: 24.037 ton / 25.327 total = 94.9% · GLX: 630 ton = 2.5% · Otros: 660 ton = 2.6%
 const lineasMix = {
-  acidoBorico:   0.94,  // ácido bórico (ingresos)
-  granulex:      0.04,  // granulex
-  otros:         0.02,
+  acidoBorico: 0.949,
+  granulex:    0.025,
+  otros:       0.026,
 };
 
+// Mercados: sin datos disponibles en el Excel — sección no desplegada en dashboard
 const mercados = {
-  brasil:    0.34, europa: 0.22, usa: 0.18, asia: 0.14, chile: 0.08, otros: 0.04,
+  brasil: 0.34, europa: 0.22, usa: 0.18, asia: 0.14, chile: 0.08, otros: 0.04,
 };
 
 function calcImpuesto(rai) { return rai > 0 ? Math.round(rai * 0.27) : 0; }
@@ -504,13 +329,14 @@ function buildForecast() {
   });
   ['2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'].forEach(m => {
     const p = ppto2026[m]; if (!p) return;
-    // Ajuste FC: ingresos -2% por TC, costos +1.5%, dif cambio -120
+    // FC 3+9: para meses sin cierre real, se usa el Ppto 2026 sin ajuste
+    // (no hay forecast ajustado disponible en el Excel)
     fc[m] = {
-      ingresos: Math.round(p.ingresos * 0.98),
-      costoVentas: Math.round(p.costoVentas * 1.015),
+      ingresos: p.ingresos,
+      costoVentas: p.costoVentas,
       gastosAdmin: p.gastosAdmin,
       gastosVentas: p.gastosVentas,
-      difCambio: -120,
+      difCambio: p.difCambio || 0,
       depreciacion: p.depreciacion,
       gastosFin: p.gastosFin,
     };
