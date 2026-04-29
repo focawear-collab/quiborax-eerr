@@ -1,13 +1,1 @@
-[
-  {
-    "id": 2,
-    "title": "Analizar varianza G.Admin Ene vs Ppto",
-    "owner": "Controller",
-    "dueDate": "2026-05-01",
-    "priority": "alta",
-    "status": "open",
-    "linkLine": "gastosAdmin",
-    "completed": false,
-    "history": []
-  }
-]
+[]
