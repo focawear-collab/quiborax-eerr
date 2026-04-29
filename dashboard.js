@@ -110,10 +110,6 @@ function StatusBar({
     style: {
       color: TPAL_A.textMute
     }
-  }, "USR "), "g.gonzalez@quiborax.cl"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.textMute
-    }
   }, "SES "), hh, ":", mm, ":", ss), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
     style: {
       color: TPAL_A.textMute
