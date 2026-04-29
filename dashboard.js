@@ -860,7 +860,6 @@ function EvolucionPanel({
   currency
 }) {
   const [showFC, setShowFC] = useStateA(true);
-  const [showEvents, setShowEvents] = useStateA(true);
 
   // Real Ene 2025 → Mar 2026 + FC Apr-Dic 2026 (forecast)
   const realMonths = DA.MONTHS_REAL;
@@ -883,40 +882,6 @@ function EvolucionPanel({
   });
   const maxIng = Math.max(...data.map(d => Math.max(d.ingresos, d.pptoIngresos || 0)));
   const maxEbi = Math.max(...data.map(d => Math.max(d.ebitda, d.ppto || 0)));
-
-  // Eventos calibrados (anclas en mes-año)
-  const events = [{
-    m: '2025-03',
-    label: 'Cierre auditoría 2024',
-    color: TPAL_A.cyan,
-    icon: '◆'
-  }, {
-    m: '2025-07',
-    label: 'Embarque récord Brasil',
-    color: TPAL_A.green,
-    icon: '▲'
-  }, {
-    m: '2025-09',
-    label: 'Ajuste TC histórico (1006)',
-    color: TPAL_A.amber,
-    icon: '●'
-  }, {
-    m: '2025-12',
-    label: 'Cierre fiscal 2025',
-    color: TPAL_A.cyan,
-    icon: '◆'
-  }, {
-    m: '2026-03',
-    label: 'Mejor mes histórico',
-    color: TPAL_A.green,
-    icon: '▲'
-  }, {
-    m: '2026-04',
-    label: 'Inicio FC 3+9',
-    color: TPAL_A.amber,
-    dashed: true,
-    icon: '◇'
-  }];
 
   // Stats strip (totales del rango visible)
   const sumIngReal = data.filter(d => d.isReal).reduce((a, d) => a + d.ingresos, 0);
@@ -971,21 +936,7 @@ function EvolucionPanel({
     style: {
       accentColor: TPAL_A.amber
     }
-  }), /*#__PURE__*/React.createElement("span", null, "Mostrar FC Abr-Dic 2026")), /*#__PURE__*/React.createElement("label", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 6,
-      cursor: 'pointer'
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    type: "checkbox",
-    checked: showEvents,
-    onChange: e => setShowEvents(e.target.checked),
-    style: {
-      accentColor: TPAL_A.amber
-    }
-  }), /*#__PURE__*/React.createElement("span", null, "Mostrar eventos"))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Mostrar FC Abr-Dic 2026"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
       gridTemplateColumns: `repeat(${showFC ? 4 : 2}, 1fr)`,
@@ -1099,7 +1050,6 @@ function EvolucionPanel({
     maxY: maxIng,
     color: TPAL_A.amber,
     pptoColor: TPAL_A.cyan,
-    events: showEvents ? events : [],
     currency: currency
   })), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1148,8 +1098,7 @@ function EvolucionPanel({
   }, "\u25A1 PPTO")), /*#__PURE__*/React.createElement(DualBarChartV2, {
     data: data,
     maxY: maxEbi,
-    currency: currency,
-    events: showEvents ? events : []
+    currency: currency
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       background: TPAL_A.panel,
@@ -1234,60 +1183,14 @@ function EvolucionPanel({
     }
   }, "\u2504 Ppto")), /*#__PURE__*/React.createElement(CumulativeChart, {
     currency: currency,
-    showFC: showFC,
-    events: showEvents ? events : []
-  })), showEvents && /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: TPAL_A.panel,
-      border: `1px solid ${TPAL_A.border}`,
-      padding: '12px 16px'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: 'DM Mono',
-      fontSize: 9.5,
-      letterSpacing: 0.8,
-      color: TPAL_A.textMute,
-      marginBottom: 10
-    }
-  }, "EVENTOS \xB7 ANCLAS TEMPORALES"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-      gap: '8px 16px'
-    }
-  }, events.map((ev, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    style: {
-      display: 'flex',
-      gap: 10,
-      fontFamily: 'DM Mono',
-      fontSize: 11,
-      alignItems: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: ev.color,
-      fontSize: 13,
-      width: 14
-    }
-  }, ev.icon), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.amber,
-      minWidth: 60
-    }
-  }, ev.m), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.text
-    }
-  }, ev.label))))));
+    showFC: showFC
+  })));
 }
 function BarChartV2({
   data,
   maxY,
   color,
   pptoColor,
-  events,
   currency
 }) {
   const H = 200;
@@ -1379,40 +1282,12 @@ function BarChartV2({
       textAnchor: "middle",
       fontWeight: 600
     }, d.x.split('-')[0]));
-  }), events.map((ev, i) => {
-    const idx = data.findIndex(d => d.m === ev.m);
-    if (idx < 0) return null;
-    const x = PAD + idx * barW + barW / 2;
-    return /*#__PURE__*/React.createElement("g", {
-      key: i
-    }, /*#__PURE__*/React.createElement("line", {
-      x1: x,
-      x2: x,
-      y1: 5,
-      y2: H + 10,
-      stroke: ev.color,
-      strokeWidth: 1,
-      strokeDasharray: ev.dashed ? '3,3' : 'none',
-      opacity: 0.5
-    }), /*#__PURE__*/React.createElement("circle", {
-      cx: x,
-      cy: 8,
-      r: 3,
-      fill: ev.color
-    }), /*#__PURE__*/React.createElement("rect", {
-      x: x - 2,
-      y: 5,
-      width: 4,
-      height: 4,
-      fill: ev.color
-    }), /*#__PURE__*/React.createElement("title", null, ev.label));
   }));
 }
 function DualBarChartV2({
   data,
   maxY,
-  currency,
-  events
+  currency
 }) {
   const H = 200;
   const PAD = 32;
@@ -1480,27 +1355,6 @@ function DualBarChartV2({
       fontFamily: "DM Mono",
       textAnchor: "middle"
     }, FA.MONTH_NAMES_ES[parseInt(d.m.split('-')[1]) - 1]));
-  }), events.map((ev, i) => {
-    const idx = data.findIndex(d => d.m === ev.m);
-    if (idx < 0) return null;
-    const x = PAD + idx * barW + barW / 2;
-    return /*#__PURE__*/React.createElement("g", {
-      key: i
-    }, /*#__PURE__*/React.createElement("line", {
-      x1: x,
-      x2: x,
-      y1: 5,
-      y2: H + 10,
-      stroke: ev.color,
-      strokeWidth: 1,
-      strokeDasharray: ev.dashed ? '3,3' : 'none',
-      opacity: 0.5
-    }), /*#__PURE__*/React.createElement("circle", {
-      cx: x,
-      cy: 8,
-      r: 3,
-      fill: ev.color
-    }));
   }));
 }
 function SparkLineV2({
@@ -1512,9 +1366,11 @@ function SparkLineV2({
   const W = 1000;
   const H = 140;
   const PAD = 32;
-  const min = 0;
-  const max = Math.max(...data) * 1.15;
-  const range = max - min;
+  const rawMin = Math.min(...data);
+  const rawMax = Math.max(...data);
+  const min = Math.min(rawMin, 0) * 1.2;
+  const max = Math.max(rawMax, 0) * 1.2 || 5;
+  const range = max - min || 1;
   const pts = data.map((v, i) => {
     const x = PAD + i / (data.length - 1) * (W - PAD * 2);
     const y = PAD + (1 - (v - min) / range) * (H - PAD * 2);
@@ -1631,8 +1487,7 @@ function SparkLineV2({
 // ─── CumulativeChart: ingreso acumulado 2026 con FC + banda confianza ───
 function CumulativeChart({
   currency,
-  showFC,
-  events
+  showFC
 }) {
   const months2026 = DA.months2026All;
   const realMonths2026 = DA.months2026Real;
@@ -1778,28 +1633,7 @@ function CumulativeChart({
     fontSize: 9,
     fontFamily: "DM Mono",
     textAnchor: "middle"
-  }, FA.MONTH_NAMES_ES[parseInt(s.m.split('-')[1]) - 1])), events.filter(e => e.m.startsWith('2026')).map((ev, i) => {
-    const idx = months2026.indexOf(ev.m);
-    if (idx < 0) return null;
-    const x = xAt(idx);
-    return /*#__PURE__*/React.createElement("g", {
-      key: i
-    }, /*#__PURE__*/React.createElement("line", {
-      x1: x,
-      x2: x,
-      y1: PAD,
-      y2: H - PAD,
-      stroke: ev.color,
-      strokeWidth: 1,
-      strokeDasharray: ev.dashed ? '3,3' : 'none',
-      opacity: 0.4
-    }), /*#__PURE__*/React.createElement("circle", {
-      cx: x,
-      cy: PAD - 4,
-      r: 3,
-      fill: ev.color
-    }));
-  }), (() => {
+  }, FA.MONTH_NAMES_ES[parseInt(s.m.split('-')[1]) - 1])), (() => {
     const last = series[series.length - 1];
     return /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("text", {
       x: W - PAD + 4,
