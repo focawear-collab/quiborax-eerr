@@ -3406,7 +3406,28 @@ function VariantA() {
   const [currency, setCurrency] = usePersistA('currency', 'USD');
   const [period, setPeriod] = usePersistA('period', 'mes');
   const [comments, setComments] = usePersistA('comments', DA.COMENTARIOS_SEED);
-  const [acciones, setAcciones] = usePersistA('acciones', DA.ACCIONES_SEED);
+
+  // Acciones: shared via serverless API (GitHub-backed), no localStorage
+  const [acciones, setAccionesRaw] = useStateA(DA.ACCIONES_SEED);
+  useEffectA(() => {
+    fetch('/api/acciones').then(r => r.json()).then(data => {
+      if (Array.isArray(data) && data.length > 0) setAccionesRaw(data);
+    }).catch(() => {});
+  }, []);
+  const _saveRef = useRefA(null);
+  const setAcciones = useMemoA(() => newArr => {
+    setAccionesRaw(newArr);
+    clearTimeout(_saveRef.current);
+    _saveRef.current = setTimeout(() => {
+      fetch('/api/acciones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newArr)
+      }).catch(e => console.log('acciones save failed:', e));
+    }, 300);
+  }, []);
   return /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
