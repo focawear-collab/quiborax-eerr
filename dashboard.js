@@ -2603,21 +2603,6 @@ function AccionesPanel({
       bg: 'rgba(61,240,154,0.06)'
     }
   };
-  const LINE_LABELS = {
-    ingresos: 'Ingresos',
-    costoVentas: 'Costo de Ventas',
-    gastosAdmin: 'Gastos Admin.',
-    gastosVentas: 'Gastos de Venta',
-    depreciacion: 'Depreciación',
-    difCambio: 'Diferencia de cambio',
-    gastosFin: 'Gastos Financieros',
-    rai: 'Resultado a/i',
-    impuesto: 'Impuesto',
-    utilidad: 'Utilidad',
-    ebitda: 'EBITDA',
-    margenBruto: 'Margen Bruto',
-    resOperacional: 'Resultado Operacional'
-  };
   function setStatus(id, st) {
     setAcciones(acciones.map(a => a.id === id ? {
       ...a,
@@ -3599,16 +3584,19 @@ function generateAutoNotes(period) {
   return notes;
 }
 const LINE_LABELS = {
-  ingresos: 'INGRESOS',
-  costoVentas: 'COSTO DE VENTAS',
-  margenBruto: 'MARGEN BRUTO',
-  gastosAdmin: 'G. ADMINISTRACIÓN',
-  gastosVentas: 'G. DE VENTA',
+  ingresos: 'Ingresos',
+  costoVentas: 'Costo de Ventas',
+  margenBruto: 'Margen Bruto',
+  gastosAdmin: 'Gastos Admin.',
+  gastosVentas: 'Gastos de Venta',
+  depreciacion: 'Depreciación',
+  resOperacional: 'Resultado Operacional',
   ebitda: 'EBITDA',
-  resOperacional: 'RES. OPERACIONAL',
-  difCambio: 'DIF. DE CAMBIO',
-  gastosFin: 'GASTOS FINANCIEROS',
-  utilidad: 'UTILIDAD'
+  difCambio: 'Diferencia de cambio',
+  gastosFin: 'Gastos Financieros',
+  rai: 'Resultado a/i',
+  impuesto: 'Impuesto',
+  utilidad: 'Utilidad'
 };
 
 // ─── Panel combinado: ANÁLISIS AI + NOTAS CFO ──────────────────────────
