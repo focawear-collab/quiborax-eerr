@@ -1,6 +1,1 @@
-{
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/QB Dashboard EERR.html" }
-  ]
-}
+{ "version": 2 }
