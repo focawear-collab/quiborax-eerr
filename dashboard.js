@@ -1383,9 +1383,21 @@ function SparkLineV2({
   const pathReal = realPts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
   const pathFC = linkPts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
 
-  // Banda objetivo 12-18%
-  const yTop = PAD + (1 - 18 / range) * (H - PAD * 2);
-  const yBot = PAD + (1 - 12 / range) * (H - PAD * 2);
+  // Conversión valor → Y (mismo sistema que los puntos)
+  const toY = v => PAD + (1 - (v - min) / range) * (H - PAD * 2);
+  const chartTop = PAD;
+  const chartBot = H - PAD;
+
+  // Banda objetivo 12-18% — clamped al área visible
+  const yTop18 = toY(18);
+  const yBot12 = toY(12);
+  const bandVisible = yBot12 > chartTop && yTop18 < chartBot; // hay al menos parte visible
+  const bandTop = Math.max(chartTop, yTop18);
+  const bandBot = Math.min(chartBot, yBot12);
+
+  // Línea cero (cuando hay negativos)
+  const yZero = toY(0);
+  const showZero = min < 0 && max > 0;
   return /*#__PURE__*/React.createElement("svg", {
     viewBox: `0 0 ${W} ${H + 24}`,
     style: {
@@ -1406,39 +1418,53 @@ function SparkLineV2({
     offset: "100%",
     stopColor: TPAL_A.amber,
     stopOpacity: 0
-  }))), /*#__PURE__*/React.createElement("rect", {
+  }))), showZero && /*#__PURE__*/React.createElement("line", {
+    x1: PAD,
+    x2: W - PAD,
+    y1: yZero,
+    y2: yZero,
+    stroke: "#475569",
+    strokeWidth: 0.8,
+    strokeDasharray: "3,3"
+  }), showZero && /*#__PURE__*/React.createElement("text", {
+    x: PAD + 2,
+    y: yZero - 3,
+    fill: "#475569",
+    fontSize: 7.5,
+    fontFamily: "DM Mono"
+  }, "0%"), bandVisible && /*#__PURE__*/React.createElement("rect", {
     x: PAD,
-    y: yTop,
+    y: bandTop,
     width: W - PAD * 2,
-    height: Math.max(0, yBot - yTop),
+    height: Math.max(0, bandBot - bandTop),
     fill: TPAL_A.green,
     opacity: 0.06
-  }), /*#__PURE__*/React.createElement("line", {
+  }), bandVisible && yTop18 >= chartTop && yTop18 <= chartBot && /*#__PURE__*/React.createElement("line", {
     x1: PAD,
     x2: W - PAD,
-    y1: yTop,
-    y2: yTop,
+    y1: yTop18,
+    y2: yTop18,
     stroke: TPAL_A.greenDim,
     strokeWidth: 0.8,
     strokeDasharray: "2,3"
-  }), /*#__PURE__*/React.createElement("line", {
+  }), bandVisible && yBot12 >= chartTop && yBot12 <= chartBot && /*#__PURE__*/React.createElement("line", {
     x1: PAD,
     x2: W - PAD,
-    y1: yBot,
-    y2: yBot,
+    y1: yBot12,
+    y2: yBot12,
     stroke: TPAL_A.greenDim,
     strokeWidth: 0.8,
     strokeDasharray: "2,3"
-  }), /*#__PURE__*/React.createElement("text", {
+  }), bandVisible && yTop18 >= chartTop && /*#__PURE__*/React.createElement("text", {
     x: W - PAD - 2,
-    y: yTop - 3,
+    y: Math.max(chartTop + 8, yTop18 - 3),
     fill: TPAL_A.greenDim,
     fontSize: 8,
     fontFamily: "DM Mono",
     textAnchor: "end"
-  }, "18%"), /*#__PURE__*/React.createElement("text", {
+  }, "18%"), bandVisible && yBot12 <= chartBot && /*#__PURE__*/React.createElement("text", {
     x: W - PAD - 2,
-    y: yBot + 10,
+    y: Math.min(chartBot - 2, yBot12 + 10),
     fill: TPAL_A.greenDim,
     fontSize: 8,
     fontFamily: "DM Mono",
