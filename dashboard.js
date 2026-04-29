@@ -126,25 +126,7 @@ function StatusBar({
     style: {
       color: TPAL_A.green
     }
-  }, "\u25CF LIVE"), /*#__PURE__*/React.createElement("button", {
-    onClick: () => {
-      if (confirm('¿Restablecer comentarios y acciones a los valores iniciales? Se perderán cambios locales.')) {
-        ['comments', 'acciones', 'currency', 'period'].forEach(k => localStorage.removeItem('qb.a.' + k));
-        location.reload();
-      }
-    },
-    style: {
-      background: 'transparent',
-      border: `1px solid ${TPAL_A.border}`,
-      color: TPAL_A.textMute,
-      fontFamily: 'inherit',
-      fontSize: 10,
-      padding: '3px 8px',
-      cursor: 'pointer',
-      letterSpacing: 0.5
-    },
-    title: "Borrar cambios locales (comentarios, acciones)"
-  }, "RESET"));
+  }, "\u25CF LIVE"));
 }
 
 // ─── Command bar (selectores) ──────────────────────────────────────────
