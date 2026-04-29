@@ -1,3 +1,4 @@
+
 // ─── QB · Variant A — Terminal (Bloomberg-style) ───────────────────────
 // Dense monospace, dark, for CFO/Controller daily use
 // Loaded after data.js + format.js
@@ -155,6 +156,9 @@ function CommandBar({
   }, {
     id: 'act',
     label: 'ACCIONES'
+  }, {
+    id: 'glos',
+    label: 'GLOSARIO'
   }];
   const periods = [{
     id: 'mes',
@@ -325,43 +329,43 @@ function KpiStrip({
     k: 'INGRESOS',
     v: real.ingresos,
     base: ppto.ingresos,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.ingresos,
+    ya: lastYr?.ingresos,
     fmt: 'money'
   }, {
     k: 'M.BRUTO',
     v: real.margenBruto,
     base: ppto.margenBruto,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.margenBruto,
+    ya: lastYr?.margenBruto,
     fmt: 'money'
   }, {
     k: 'M.BRUTO %',
     v: real.margenBrutoPct,
     base: ppto.margenBrutoPct,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.margenBrutoPct,
+    ya: lastYr?.margenBrutoPct,
     fmt: 'pct'
   }, {
     k: 'EBITDA',
     v: real.ebitda,
     base: ppto.ebitda,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.ebitda,
+    ya: lastYr?.ebitda,
     fmt: 'money'
   }, {
     k: 'EBITDA %',
     v: real.ebitdaPct,
     base: ppto.ebitdaPct,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.ebitdaPct,
+    ya: lastYr?.ebitdaPct,
     fmt: 'pct'
   }, {
     k: 'RES.OPER.',
     v: real.resOperacional,
     base: ppto.resOperacional,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.resOperacional,
+    ya: lastYr?.resOperacional,
     fmt: 'money'
   }, {
     k: 'UTILIDAD',
     v: real.utilidad,
     base: ppto.utilidad,
-    ya: lastYr === null || lastYr === void 0 ? void 0 : lastYr.utilidad,
+    ya: lastYr?.utilidad,
     fmt: 'money'
   }];
   return /*#__PURE__*/React.createElement("div", {
@@ -439,7 +443,7 @@ function EerrTable({
     label: 'Ingresos por ventas',
     real: real.ingresos,
     ppto: ppto.ingresos,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.ingresos,
+    ly: lastYr?.ingresos,
     bold: true,
     bg: true,
     isExpense: false
@@ -458,7 +462,7 @@ function EerrTable({
     label: 'Margen Bruto',
     real: real.margenBruto,
     ppto: ppto.margenBruto,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.margenBruto,
+    ly: lastYr?.margenBruto,
     bold: true,
     bg: true,
     isExpense: false,
@@ -498,7 +502,7 @@ function EerrTable({
     label: 'Resultado Operacional',
     real: real.resOperacional,
     ppto: ppto.resOperacional,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.resOperacional,
+    ly: lastYr?.resOperacional,
     bold: true,
     bg: true,
     isExpense: false
@@ -507,7 +511,7 @@ function EerrTable({
     label: 'EBITDA',
     real: real.ebitda,
     ppto: ppto.ebitda,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.ebitda,
+    ly: lastYr?.ebitda,
     bold: true,
     bg: true,
     isExpense: false,
@@ -517,7 +521,7 @@ function EerrTable({
     label: 'Diferencia de cambio',
     real: real.difCambio,
     ppto: ppto.difCambio,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.difCambio,
+    ly: lastYr?.difCambio,
     bold: false,
     bg: false,
     isExpense: false,
@@ -537,7 +541,7 @@ function EerrTable({
     label: 'Resultado antes de impto.',
     real: real.rai,
     ppto: ppto.rai,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.rai,
+    ly: lastYr?.rai,
     bold: false,
     bg: false,
     isExpense: false
@@ -556,7 +560,7 @@ function EerrTable({
     label: 'UTILIDAD DEL EJERCICIO',
     real: real.utilidad,
     ppto: ppto.utilidad,
-    ly: lastYr === null || lastYr === void 0 ? void 0 : lastYr.utilidad,
+    ly: lastYr?.utilidad,
     bold: true,
     bg: true,
     isExpense: false,
@@ -872,12 +876,12 @@ function EvolucionPanel({
     return {
       m,
       isReal,
-      ingresos: (e === null || e === void 0 ? void 0 : e.ingresos) || 0,
-      ebitda: (e === null || e === void 0 ? void 0 : e.ebitda) || 0,
-      ebitdaPct: (e === null || e === void 0 ? void 0 : e.ebitdaPct) || 0,
-      utilidad: (e === null || e === void 0 ? void 0 : e.utilidad) || 0,
-      ppto: p === null || p === void 0 ? void 0 : p.ebitda,
-      pptoIngresos: p === null || p === void 0 ? void 0 : p.ingresos
+      ingresos: e?.ingresos || 0,
+      ebitda: e?.ebitda || 0,
+      ebitdaPct: e?.ebitdaPct || 0,
+      utilidad: e?.utilidad || 0,
+      ppto: p?.ebitda,
+      pptoIngresos: p?.ingresos
     };
   });
   const maxIng = Math.max(...data.map(d => Math.max(d.ingresos, d.pptoIngresos || 0)));
@@ -1362,7 +1366,6 @@ function SparkLineV2({
   labels,
   isRealArr
 }) {
-  var _realPts;
   const W = 1000;
   const H = 140;
   const PAD = 32;
@@ -1470,7 +1473,7 @@ function SparkLineV2({
     fontFamily: "DM Mono",
     textAnchor: "end"
   }, "12%"), /*#__PURE__*/React.createElement("path", {
-    d: pathReal + ` L ${((_realPts = realPts[realPts.length - 1]) === null || _realPts === void 0 ? void 0 : _realPts[0]) || 0},${H - PAD} L ${PAD},${H - PAD} Z`,
+    d: pathReal + ` L ${realPts[realPts.length - 1]?.[0] || 0},${H - PAD} L ${PAD},${H - PAD} Z`,
     fill: "url(#ebitdaGradV2)"
   }), /*#__PURE__*/React.createElement("path", {
     d: pathReal,
@@ -1524,8 +1527,8 @@ function CumulativeChart({
     return {
       m,
       isReal,
-      ing: (e === null || e === void 0 ? void 0 : e.ingresos) || 0,
-      ppto: (p === null || p === void 0 ? void 0 : p.ingresos) || 0
+      ing: e?.ingresos || 0,
+      ppto: p?.ingresos || 0
     };
   });
   // Acumular
@@ -1937,9 +1940,8 @@ function LineasPanel({
 
   // Serie mensual por línea para el rango
   const series = months.map(m => {
-    var _DA$volumen$m;
     const p = DA.porProducto[m] || {};
-    const otros = ((_DA$volumen$m = DA.volumen[m]) === null || _DA$volumen$m === void 0 ? void 0 : _DA$volumen$m.otros) || 0;
+    const otros = DA.volumen[m]?.otros || 0;
     return {
       m,
       AB: {
@@ -3331,7 +3333,352 @@ function VariantA() {
   }, /*#__PURE__*/React.createElement(AccionesPanel, {
     acciones: acciones,
     setAcciones: setAcciones
-  })));
+  })), view === 'glos' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 16
+    }
+  }, /*#__PURE__*/React.createElement(GlosarioPanel, null)));
+}
+
+// ─── Glosario ─────────────────────────────────────────────────────────
+function GlosarioPanel() {
+  const [q, setQ] = useStateA('');
+  const SECTIONS = [{
+    id: 'eerr',
+    label: 'ESTADO DE RESULTADOS',
+    color: TPAL_A.amber,
+    items: [{
+      term: 'Ingresos',
+      abbr: null,
+      def: 'Ventas netas de ácido bórico (AB) y granulex (GLX). Incluye todos los destinos de exportación.',
+      formula: null
+    }, {
+      term: 'Costo de Ventas',
+      abbr: 'CV',
+      def: 'Costo directo de producción: materia prima (ulexita, ácido sulfúrico), mano de obra de planta, carga fabril y gastos de distribución.',
+      formula: null
+    }, {
+      term: 'Margen Bruto',
+      abbr: 'MB',
+      def: 'Resultado después de descontar el costo de producción.',
+      formula: 'Ingresos − Costo de Ventas'
+    }, {
+      term: 'Gastos de Administración',
+      abbr: 'G.Admin',
+      def: 'Costos de estructura corporativa: sueldos gerenciales, honorarios, arriendos, TI, seguros y gastos generales de administración.',
+      formula: null
+    }, {
+      term: 'Gastos de Venta',
+      abbr: 'G.Venta',
+      def: 'Gastos asociados a la comercialización: fletes de exportación, comisiones y gastos de distribución.',
+      formula: null
+    }, {
+      term: 'Resultado Operacional',
+      abbr: 'EBIT',
+      def: 'Resultado de la operación industrial y comercial, antes de ítems no operacionales. Incluye depreciación.',
+      formula: 'MB − G.Admin − G.Venta − Depreciación'
+    }, {
+      term: 'EBITDA',
+      abbr: null,
+      def: 'Proxy de generación de caja operacional. Elimina el efecto contable de la depreciación. Objetivo Quiborax: margen 12–18%.',
+      formula: 'Resultado Operacional + Depreciación'
+    }, {
+      term: 'Margen EBITDA %',
+      abbr: null,
+      def: 'EBITDA expresado como porcentaje de los ingresos. Indicador clave de eficiencia operacional. Banda objetivo: 12%–18%.',
+      formula: 'EBITDA / Ingresos'
+    }, {
+      term: 'Depreciación',
+      abbr: 'Dep',
+      def: 'Cargo contable por desgaste del activo fijo productivo y de administración. No implica salida de caja.',
+      formula: null
+    }, {
+      term: 'Diferencia de Cambio',
+      abbr: 'DC',
+      def: 'Ganancia o pérdida por variación del tipo de cambio CLP/USD sobre activos y pasivos en moneda extranjera. Ítem no operacional.',
+      formula: null
+    }, {
+      term: 'Gastos Financieros',
+      abbr: 'GF',
+      def: 'Intereses y comisiones sobre deuda bancaria y líneas de crédito.',
+      formula: null
+    }, {
+      term: 'Resultado Antes de Impuestos',
+      abbr: 'RAI',
+      def: 'Resultado total antes del cargo por impuesto a la renta.',
+      formula: 'Res. Operacional + Dif. Cambio − Gastos Financieros'
+    }, {
+      term: 'Impuesto a la Renta',
+      abbr: null,
+      def: 'Impuesto de Primera Categoría. Se aplica sobre el RAI positivo a tasa vigente en Chile.',
+      formula: 'RAI × 27% (si RAI > 0)'
+    }, {
+      term: 'Utilidad del Ejercicio',
+      abbr: null,
+      def: 'Resultado neto después de impuestos. Línea final del estado de resultados.',
+      formula: 'RAI − Impuesto'
+    }]
+  }, {
+    id: 'periodos',
+    label: 'PERÍODOS Y COMPARADORES',
+    color: TPAL_A.cyan,
+    items: [{
+      term: 'MES',
+      abbr: null,
+      def: 'Mes en curso cerrado (marzo 2026). Comparado contra Ppto del mismo mes y mismo mes del año anterior.'
+    }, {
+      term: 'YTD',
+      abbr: 'Year to Date',
+      def: 'Acumulado desde enero del ejercicio hasta el último mes cerrado. Para 2026: enero–marzo.'
+    }, {
+      term: 'FC 3+9',
+      abbr: 'Forecast',
+      def: 'Proyección del año completo 2026. Real enero–marzo + Presupuesto abril–diciembre. Se actualiza mensualmente.'
+    }, {
+      term: '12M',
+      abbr: null,
+      def: 'Últimos 12 meses rodantes (abril 2025 – marzo 2026). Útil para comparar sin distorsión estacional.'
+    }, {
+      term: 'Ppto',
+      abbr: 'Presupuesto',
+      def: 'Plan financiero aprobado para el ejercicio 2026, desagregado mensualmente.'
+    }, {
+      term: 'Mes ant.',
+      abbr: null,
+      def: 'Mes inmediatamente anterior al período de análisis.'
+    }, {
+      term: 'LY / Año ant.',
+      abbr: 'Last Year',
+      def: 'Mismo período del ejercicio anterior (2025). Permite análisis de tendencia interanual.'
+    }]
+  }, {
+    id: 'productos',
+    label: 'PRODUCTOS',
+    color: TPAL_A.green,
+    items: [{
+      term: 'Ácido Bórico',
+      abbr: 'AB',
+      def: 'Producto principal de Quiborax. Derivado de la refinación de ulexita. Representa ~95% del ingreso YTD 2026 y ~77% en 2025 (mayor volumen GLX ese año).',
+      formula: null
+    }, {
+      term: 'Granulex',
+      abbr: 'GLX',
+      def: 'Subproducto granular de la producción de ácido bórico. Mayor volumen en 2025 (~23% del tonelaje). En 2026 el volumen cayó significativamente a ~2.5% del mix.',
+      formula: null
+    }, {
+      term: 'Otros',
+      abbr: null,
+      def: 'Ventas menores de otros subproductos del proceso productivo.',
+      formula: null
+    }]
+  }, {
+    id: 'unidades',
+    label: 'UNIDADES Y MONEDA',
+    color: TPAL_A.amber,
+    items: [{
+      term: 'kUSD',
+      abbr: 'USDk',
+      def: 'Miles de dólares americanos (USD × 1.000). Unidad base de todas las cifras financieras en este dashboard.'
+    }, {
+      term: 'USD/ton',
+      abbr: null,
+      def: 'Dólares por tonelada métrica. Usado para precio unitario y costo unitario de producción.'
+    }, {
+      term: 'ton',
+      abbr: null,
+      def: 'Tonelada métrica (1.000 kg). Unidad de volumen de producción y venta.'
+    }, {
+      term: 'TC',
+      abbr: 'Tipo de Cambio',
+      def: 'Tipo de cambio CLP/USD promedio mensual. Fuente: Quiborax. Impacta directamente la diferencia de cambio y el resultado no operacional.'
+    }, {
+      term: 'CLP',
+      abbr: 'Peso Chileno',
+      def: 'Moneda local en que se denominan parte de los costos y pasivos de Quiborax. La empresa vende en USD pero tiene costos operacionales en CLP.'
+    }]
+  }, {
+    id: 'datos',
+    label: 'FUENTES Y METODOLOGÍA',
+    color: TPAL_A.textMute,
+    items: [{
+      term: 'Excel H1',
+      abbr: null,
+      def: 'Hoja de gestión mensual de Quiborax. Contiene el EERR consolidado, EERR por producto (AB/GLX), volúmenes de venta, TC y presupuesto 2026. Cifras en kUSD.'
+    }, {
+      term: 'Excel AB',
+      abbr: null,
+      def: 'Detalle de costos de producción de Ácido Bórico por componente: materia prima (MP), mano de obra (MO) y carga fabril (CF). Base del tab COSTO.'
+    }, {
+      term: 'Período real',
+      abbr: null,
+      def: 'Enero 2025 → Marzo 2026 (15 meses). Datos extractados del Excel oficial. Último mes cerrado: marzo 2026.'
+    }, {
+      term: 'porProducto 2026',
+      abbr: null,
+      def: 'Ingresos y costos por línea (AB/GLX) para enero–marzo 2026. Valores exactos del Excel H1 (filas Ingreso AB/GLX, Costo AB/GLX).'
+    }, {
+      term: 'porProducto 2025',
+      abbr: null,
+      def: 'El Excel no tiene desglose financiero AB/GLX para 2025. Se estima proporcionalmente al volumen real de cada mes (AB% y GLX% del total de toneladas).'
+    }, {
+      term: 'COSTO_DETALLE',
+      abbr: null,
+      def: 'Detalle de componentes de costo AB (MP, MO, CF). Valores reales de marzo 2026 vs mes anterior, presupuesto y año anterior. Extraídos del Excel AB.'
+    }, {
+      term: 'Impuesto',
+      abbr: null,
+      def: 'Calculado como 27% sobre el RAI cuando es positivo. Si el RAI es negativo, impuesto = 0 (no se reconoce crédito diferido en este modelo simplificado).'
+    }]
+  }];
+  const lower = q.toLowerCase();
+  const filtered = SECTIONS.map(s => ({
+    ...s,
+    items: q.length < 2 ? s.items : s.items.filter(it => it.term.toLowerCase().includes(lower) || it.abbr && it.abbr.toLowerCase().includes(lower) || it.def.toLowerCase().includes(lower) || it.formula && it.formula.toLowerCase().includes(lower))
+  })).filter(s => s.items.length > 0);
+  const S = {
+    padding: '6px 0',
+    borderBottom: `1px solid ${TPAL_A.border}`,
+    display: 'grid',
+    gridTemplateColumns: '180px 1fr',
+    gap: '0 24px',
+    alignItems: 'start'
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 16,
+      alignItems: 'start'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      gridColumn: '1/-1',
+      background: TPAL_A.panel,
+      border: `1px solid ${TPAL_A.border}`,
+      padding: '12px 16px',
+      display: 'flex',
+      gap: 12,
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: TPAL_A.amber,
+      fontFamily: 'DM Mono',
+      fontSize: 13,
+      fontWeight: 700
+    }
+  }, "\u2315"), /*#__PURE__*/React.createElement("input", {
+    value: q,
+    onChange: e => setQ(e.target.value),
+    placeholder: "Buscar t\xE9rmino...",
+    style: {
+      flex: 1,
+      background: 'transparent',
+      border: 'none',
+      color: TPAL_A.text,
+      fontFamily: 'DM Mono',
+      fontSize: 12.5,
+      outline: 'none'
+    }
+  }), q && /*#__PURE__*/React.createElement("button", {
+    onClick: () => setQ(''),
+    style: {
+      background: 'transparent',
+      border: 'none',
+      color: TPAL_A.textMute,
+      cursor: 'pointer',
+      fontFamily: 'inherit',
+      fontSize: 14
+    }
+  }, "\xD7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: TPAL_A.textMute,
+      fontFamily: 'DM Mono',
+      fontSize: 10
+    }
+  }, SECTIONS.reduce((a, s) => a + s.items.length, 0), " t\xE9rminos")), filtered.map(sec => /*#__PURE__*/React.createElement("div", {
+    key: sec.id,
+    style: {
+      background: TPAL_A.panel,
+      border: `1px solid ${TPAL_A.border}`,
+      padding: '14px 18px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: sec.color,
+      fontWeight: 700,
+      fontFamily: 'DM Mono',
+      fontSize: 11
+    }
+  }, '>'), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'DM Mono',
+      fontSize: 10.5,
+      fontWeight: 700,
+      color: sec.color,
+      letterSpacing: 0.8
+    }
+  }, sec.label)), sec.items.map((it, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: S
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      paddingTop: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: 'DM Mono',
+      fontSize: 11.5,
+      fontWeight: 700,
+      color: TPAL_A.text
+    }
+  }, it.term), it.abbr && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: 'DM Mono',
+      fontSize: 9.5,
+      color: sec.color,
+      marginTop: 2,
+      letterSpacing: 0.5
+    }
+  }, it.abbr)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      paddingTop: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: 'DM Sans',
+      fontSize: 11.5,
+      color: TPAL_A.textDim,
+      lineHeight: 1.55
+    }
+  }, it.def), it.formula && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 5,
+      fontFamily: 'DM Mono',
+      fontSize: 10.5,
+      color: TPAL_A.amber,
+      background: TPAL_A.bg,
+      padding: '3px 8px',
+      display: 'inline-block',
+      borderLeft: `2px solid ${TPAL_A.amber}`
+    }
+  }, it.formula)))))), filtered.length === 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      gridColumn: '1/-1',
+      textAlign: 'center',
+      padding: '40px 0',
+      color: TPAL_A.textMute,
+      fontFamily: 'DM Mono',
+      fontSize: 12
+    }
+  }, "Sin resultados para \"", q, "\""));
 }
 
 // ─── Auto-note generator ───────────────────────────────────────────────
@@ -3368,7 +3715,7 @@ function generateAutoNotes(period) {
 
   // Ingresos
   const vI = vPpto(real.ingresos, ppto.ingresos);
-  const yaI = vYA(real.ingresos, lastYr === null || lastYr === void 0 ? void 0 : lastYr.ingresos);
+  const yaI = vYA(real.ingresos, lastYr?.ingresos);
   notes.ingresos = `${label} · Ingresos: ${fmtM(real.ingresos)} (${pLabel(vI)}${yaI ? ' · ' + yaLabel(yaI) : ''}). ` + (vI.abs >= 0 ? 'Ventas por sobre presupuesto, favorecido por volumen y/o precio.' : 'Ventas bajo presupuesto — revisar mix de producto y precio realizado.');
 
   // Costo de ventas
@@ -3395,7 +3742,7 @@ function generateAutoNotes(period) {
   const vEB = vPpto(real.ebitda, ppto.ebitda);
   const ebPct = (real.ebitdaPct * 100).toFixed(1);
   const ebPptoPct = (ppto.ebitdaPct * 100).toFixed(1);
-  const yaEB = vYA(real.ebitda, lastYr === null || lastYr === void 0 ? void 0 : lastYr.ebitda);
+  const yaEB = vYA(real.ebitda, lastYr?.ebitda);
   notes.ebitda = `EBITDA: ${fmtM(real.ebitda)} · ${ebPct}% (Ppto: ${ebPptoPct}%). ${pLabel(vEB)}${yaEB ? ' · ' + yaLabel(yaEB) : ''}. ` + (vEB.abs >= 0 ? 'Generación operacional por sobre objetivo.' : 'EBITDA bajo Ppto — analizar mix ingresos/costo antes de proyectar cierre de año.');
 
   // Resultado operacional
@@ -3413,7 +3760,7 @@ function generateAutoNotes(period) {
 
   // Utilidad
   const vU = vPpto(real.utilidad, ppto.utilidad);
-  const yaU = vYA(real.utilidad, lastYr === null || lastYr === void 0 ? void 0 : lastYr.utilidad);
+  const yaU = vYA(real.utilidad, lastYr?.utilidad);
   const uPct = (real.utilidadPct * 100).toFixed(1);
   notes.utilidad = `Utilidad del ejercicio: ${fmtM(real.utilidad)} · ${uPct}% margen neto. ${pLabel(vU)}${yaU ? ' · ' + yaLabel(yaU) : ''}. ` + (vU.abs >= 0 ? 'Resultado positivo respecto al objetivo — buena absorción de costos y gastos.' : 'Bajo Ppto — resultado presionado por margen operacional y/o resultado no operacional.');
   return notes;
