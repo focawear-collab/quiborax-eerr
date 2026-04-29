@@ -2939,13 +2939,13 @@ function AccionesPanel({
       style: {
         padding: '2px 7px',
         background: 'transparent',
-        border: `1px solid ${prColor[a.priority]}`,
-        color: prColor[a.priority],
+        border: `1px solid ${prColor[a.priority || 'media']}`,
+        color: prColor[a.priority || 'media'],
         fontSize: 9,
         letterSpacing: 0.5,
         fontWeight: 600
       }
-    }, a.priority.toUpperCase())), /*#__PURE__*/React.createElement("td", {
+    }, (a.priority || 'media').toUpperCase())), /*#__PURE__*/React.createElement("td", {
       style: {
         padding: '9px 12px'
       },

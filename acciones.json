@@ -1,5 +1,5 @@
 [
-  { "id": 1, "title": "Revisar impacto TC en Q2 2026", "owner": "CFO", "dueDate": "2026-05-15", "completed": false },
-  { "id": 2, "title": "Analizar varianza G.Admin Ene vs Ppto", "owner": "Controller", "dueDate": "2026-05-01", "completed": false },
-  { "id": 3, "title": "Presentar FC3+9 a directorio", "owner": "Gerente General", "dueDate": "2026-05-22", "completed": false }
+  { "id": 1, "title": "Revisar impacto TC en Q2 2026", "owner": "CFO", "dueDate": "2026-05-15", "priority": "media", "status": "open", "linkLine": "difCambio", "completed": false, "history": [] },
+  { "id": 2, "title": "Analizar varianza G.Admin Ene vs Ppto", "owner": "Controller", "dueDate": "2026-05-01", "priority": "alta", "status": "open", "linkLine": "gastosAdmin", "completed": false, "history": [] },
+  { "id": 3, "title": "Presentar FC3+9 a directorio", "owner": "Gerente General", "dueDate": "2026-05-22", "priority": "alta", "status": "open", "linkLine": null, "completed": false, "history": [] }
 ]
