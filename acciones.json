@@ -1,16 +1,5 @@
 [
   {
-    "id": 1,
-    "title": "Revisar impacto TC en Q2 2026",
-    "owner": "CFO",
-    "dueDate": "2026-05-15",
-    "priority": "media",
-    "status": "open",
-    "linkLine": "difCambio",
-    "completed": false,
-    "history": []
-  },
-  {
     "id": 3,
     "title": "Presentar FC3+9 a directorio",
     "owner": "Gerente General",
