@@ -3431,9 +3431,6 @@ function VariantA() {
     comments: comments,
     setComments: setComments,
     period: period
-  }), /*#__PURE__*/React.createElement(ExportPanel, {
-    currency: currency,
-    period: period
   })))), view === 'evol' && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: 16
@@ -3755,80 +3752,6 @@ function SideNotesPanel({
     },
     onClose: () => setEditingKey(null)
   })));
-}
-function ExportPanel({
-  currency,
-  period
-}) {
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: TPAL_A.panel,
-      border: `1px solid ${TPAL_A.border}`
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '10px 14px',
-      borderBottom: `1px solid ${TPAL_A.borderHi}`,
-      fontFamily: 'DM Mono',
-      fontSize: 11,
-      color: TPAL_A.text
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.amber,
-      fontWeight: 700,
-      marginRight: 8
-    }
-  }, '>'), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 600
-    }
-  }, "EXPORTAR")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '14px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 8
-    }
-  }, [{
-    k: 'pdf',
-    label: 'PDF · Reporte mensual ejecutivo'
-  }, {
-    k: 'pptx',
-    label: 'PPTX · Presentación directorio'
-  }, {
-    k: 'xlsx',
-    label: 'XLSX · Pivot detallado · 12M'
-  }, {
-    k: 'csv',
-    label: 'CSV · Datos crudos · YTD'
-  }].map(o => /*#__PURE__*/React.createElement("button", {
-    key: o.k,
-    onClick: () => alert('Exportar ' + o.k.toUpperCase() + ' (mock)'),
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-      padding: '9px 11px',
-      background: TPAL_A.bg,
-      border: `1px solid ${TPAL_A.border}`,
-      color: TPAL_A.text,
-      fontFamily: 'DM Mono',
-      fontSize: 11,
-      cursor: 'pointer',
-      textAlign: 'left',
-      justifyContent: 'space-between'
-    }
-  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.amber,
-      marginRight: 8
-    }
-  }, "\u2193"), o.label), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.textMute
-    }
-  }, "\u2197")))));
 }
 
 // ─── Costo de Ventas · Drill-down ──────────────────────────────────────
