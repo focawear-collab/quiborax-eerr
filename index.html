@@ -12,21 +12,19 @@
   html, body { background:#0a0a0c; color:#fff; font-family: 'DM Sans', system-ui, sans-serif; min-height:100vh; }
   #root { width:100%; min-height:100vh; }
 </style>
+</head>
+<body>
+<div id="root"></div>
+
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-
 <script src="data.js"></script>
 <script src="format.js"></script>
-<!-- dashboard.jsx pre-compilado con Babel (sin transpilación en browser) -->
 <script src="dashboard.js"></script>
-
 <script>
   ReactDOM.createRoot(document.getElementById('root')).render(
     React.createElement(window.QB_VariantA)
   );
 </script>
-</head>
-<body>
-<div id="root"></div>
 </body>
 </html>
