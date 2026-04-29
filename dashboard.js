@@ -4849,4 +4849,145 @@ function TCSensitivityPanel({
     }
   }, "El efecto neto es positivo cuando el peso se debilita (TC sube), porque la mayor parte del costo es CLP y los ingresos son USD.")));
 }
-window.QB_VariantA = VariantA;
+
+// ─── Auth gate ─────────────────────────────────────────────────────────
+const QB_PWD = 'QB2612';
+const SESSION_KEY = 'qb_auth_ok';
+function AuthGate() {
+  const [authed, setAuthed] = useStateA(() => sessionStorage.getItem(SESSION_KEY) === '1');
+  const [input, setInput] = useStateA('');
+  const [error, setError] = useStateA(false);
+  const [shake, setShake] = useStateA(false);
+  function attempt() {
+    if (input.trim() === QB_PWD) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      setAuthed(true);
+    } else {
+      setError(true);
+      setShake(true);
+      setInput('');
+      setTimeout(() => setShake(false), 600);
+    }
+  }
+  if (authed) return React.createElement(VariantA);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '100vw',
+      height: '100vh',
+      background: TPAL_A.bg,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: 'DM Mono, monospace'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: TPAL_A.panel,
+      border: `1px solid ${TPAL_A.border}`,
+      padding: '40px 48px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 24,
+      minWidth: 320,
+      transform: shake ? 'translateX(0)' : 'none',
+      animation: shake ? 'shake 0.5s ease' : 'none'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 10,
+      height: 10,
+      background: TPAL_A.amber,
+      borderRadius: 1,
+      margin: '0 auto 14px'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: TPAL_A.amber,
+      fontWeight: 700,
+      fontSize: 14,
+      letterSpacing: 2
+    }
+  }, "QB TERMINAL"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: TPAL_A.textMute,
+      fontSize: 10,
+      letterSpacing: 1,
+      marginTop: 4
+    }
+  }, "QUIBORAX S.A. \xB7 ACCESO RESTRINGIDO")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '100%'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: TPAL_A.textMute,
+      fontSize: 9,
+      letterSpacing: 1,
+      marginBottom: 8
+    }
+  }, "CLAVE DE ACCESO"), /*#__PURE__*/React.createElement("input", {
+    type: "password",
+    value: input,
+    onChange: e => {
+      setInput(e.target.value);
+      setError(false);
+    },
+    onKeyDown: e => e.key === 'Enter' && attempt(),
+    autoFocus: true,
+    placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022",
+    style: {
+      width: '100%',
+      background: TPAL_A.bg,
+      border: `1px solid ${error ? TPAL_A.red : TPAL_A.border}`,
+      color: TPAL_A.text,
+      fontFamily: 'DM Mono',
+      fontSize: 18,
+      letterSpacing: 6,
+      padding: '10px 14px',
+      outline: 'none',
+      boxSizing: 'border-box',
+      transition: 'border-color 0.2s'
+    }
+  }), error && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: TPAL_A.red,
+      fontSize: 10,
+      marginTop: 6,
+      letterSpacing: 0.5
+    }
+  }, "\u2715 Clave incorrecta")), /*#__PURE__*/React.createElement("button", {
+    onClick: attempt,
+    style: {
+      width: '100%',
+      background: TPAL_A.amber,
+      color: TPAL_A.bg,
+      border: 'none',
+      padding: '11px',
+      fontFamily: 'DM Mono',
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 1.5,
+      cursor: 'pointer'
+    }
+  }, "INGRESAR \u2192"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: TPAL_A.textMute,
+      fontSize: 9,
+      letterSpacing: 0.5
+    }
+  }, "Dashboard ejecutivo \xB7 Uso interno Quiborax S.A.")), /*#__PURE__*/React.createElement("style", null, `
+        @keyframes shake {
+          0%,100%{transform:translateX(0)}
+          20%{transform:translateX(-8px)}
+          40%{transform:translateX(8px)}
+          60%{transform:translateX(-6px)}
+          80%{transform:translateX(6px)}
+        }
+      `));
+}
+window.QB_VariantA = AuthGate;
