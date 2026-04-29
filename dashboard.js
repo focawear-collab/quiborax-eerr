@@ -3464,8 +3464,9 @@ function VariantA() {
       flexDirection: 'column',
       gap: 16
     }
-  }, /*#__PURE__*/React.createElement(NotesPanel, {
+  }, /*#__PURE__*/React.createElement(SideNotesPanel, {
     comments: comments,
+    setComments: setComments,
     period: period
   }), /*#__PURE__*/React.createElement(ExportPanel, {
     currency: currency,
@@ -3597,113 +3598,197 @@ function generateAutoNotes(period) {
   notes.utilidad = `Utilidad del ejercicio: ${fmtM(real.utilidad)} · ${uPct}% margen neto. ${pLabel(vU)}${yaU ? ' · ' + yaLabel(yaU) : ''}. ` + (vU.abs >= 0 ? 'Resultado positivo respecto al objetivo — buena absorción de costos y gastos.' : 'Bajo Ppto — resultado presionado por margen operacional y/o resultado no operacional.');
   return notes;
 }
-function NotesPanel({
+const LINE_LABELS = {
+  ingresos: 'INGRESOS',
+  costoVentas: 'COSTO DE VENTAS',
+  margenBruto: 'MARGEN BRUTO',
+  gastosAdmin: 'G. ADMINISTRACIÓN',
+  gastosVentas: 'G. DE VENTA',
+  ebitda: 'EBITDA',
+  resOperacional: 'RES. OPERACIONAL',
+  difCambio: 'DIF. DE CAMBIO',
+  gastosFin: 'GASTOS FINANCIEROS',
+  utilidad: 'UTILIDAD'
+};
+
+// ─── Panel combinado: ANÁLISIS AI + NOTAS CFO ──────────────────────────
+function SideNotesPanel({
   comments,
+  setComments,
   period
 }) {
-  const [mode, setMode] = useStateA('auto');
+  const [tab, setTab] = useStateA('ai');
   const autoNotes = useMemoA(() => generateAutoNotes(period), [period]);
-  const displayNotes = mode === 'auto' ? autoNotes : comments;
-  const filled = Object.entries(displayNotes).filter(([, v]) => v && v.trim());
-  const LINE_LABELS = {
-    ingresos: 'INGRESOS',
-    costoVentas: 'COSTO DE VENTAS',
-    margenBruto: 'MARGEN BRUTO',
-    gastosAdmin: 'G. ADMINISTRACIÓN',
-    gastosVentas: 'G. DE VENTA',
-    ebitda: 'EBITDA',
-    resOperacional: 'RES. OPERACIONAL',
-    difCambio: 'DIF. DE CAMBIO',
-    gastosFin: 'GASTOS FINANCIEROS',
-    utilidad: 'UTILIDAD'
-  };
+  const [editingKey, setEditingKey] = useStateA(null);
+  const TABS = [{
+    id: 'ai',
+    label: 'ANÁLISIS AI',
+    color: TPAL_A.cyan
+  }, {
+    id: 'cfo',
+    label: 'NOTAS CFO',
+    color: TPAL_A.amber
+  }];
+  const aiEntries = Object.entries(autoNotes).filter(([, v]) => v && v.trim());
+  const cfoEntries = Object.entries(comments).filter(([, v]) => v && v.trim());
   return /*#__PURE__*/React.createElement("div", {
     style: {
       background: TPAL_A.panel,
-      border: `1px solid ${TPAL_A.border}`
+      border: `1px solid ${TPAL_A.border}`,
+      display: 'flex',
+      flexDirection: 'column'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '10px 14px',
-      borderBottom: `1px solid ${TPAL_A.borderHi}`,
-      fontFamily: 'DM Mono',
-      fontSize: 11,
-      color: TPAL_A.text,
       display: 'flex',
-      alignItems: 'center',
-      gap: 8
+      borderBottom: `1px solid ${TPAL_A.borderHi}`
     }
-  }, /*#__PURE__*/React.createElement("span", {
+  }, TABS.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    onClick: () => setTab(t.id),
     style: {
-      color: TPAL_A.amber,
-      fontWeight: 700
+      flex: 1,
+      padding: '9px 0',
+      fontFamily: 'DM Mono',
+      fontSize: 10,
+      fontWeight: 600,
+      letterSpacing: 0.7,
+      cursor: 'pointer',
+      border: 'none',
+      background: tab === t.id ? TPAL_A.panel2 : 'transparent',
+      color: tab === t.id ? t.color : TPAL_A.textMute,
+      borderBottom: tab === t.id ? `2px solid ${t.color}` : '2px solid transparent'
     }
-  }, '>'), /*#__PURE__*/React.createElement("span", {
+  }, t.label))), tab === 'ai' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     style: {
-      fontWeight: 600
-    }
-  }, "NOTAS DEL CFO"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: TPAL_A.textMute
-    }
-  }, "\xB7 ", filled.length), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1
-    }
-  }), ['auto', 'manual'].map(m => /*#__PURE__*/React.createElement("button", {
-    key: m,
-    onClick: () => setMode(m),
-    style: {
-      background: mode === m ? TPAL_A.amber : 'transparent',
-      color: mode === m ? TPAL_A.bg : TPAL_A.textMute,
-      border: `1px solid ${mode === m ? TPAL_A.amber : TPAL_A.border}`,
+      padding: '6px 12px',
       fontFamily: 'DM Mono',
       fontSize: 9,
-      padding: '2px 7px',
-      cursor: 'pointer',
-      letterSpacing: 0.6
-    }
-  }, m.toUpperCase()))), mode === 'auto' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '6px 14px 4px',
-      fontFamily: 'DM Mono',
-      fontSize: 9.5,
       color: TPAL_A.cyan,
-      borderBottom: `1px solid ${TPAL_A.border}`
+      borderBottom: `1px solid ${TPAL_A.border}`,
+      letterSpacing: 0.4
     }
-  }, "\u26A1 Generado autom\xE1ticamente en base a datos del per\xEDodo seleccionado"), /*#__PURE__*/React.createElement("div", {
+  }, "\u26A1 Auto-generado \xB7 Per\xEDodo: ", getAggregates(period).info.label), /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '14px',
+      padding: '12px',
       display: 'flex',
       flexDirection: 'column',
-      gap: 14,
-      maxHeight: 420,
+      gap: 12,
+      maxHeight: 400,
       overflowY: 'auto'
     }
-  }, filled.length === 0 && /*#__PURE__*/React.createElement("span", {
+  }, aiEntries.length === 0 && /*#__PURE__*/React.createElement("span", {
     style: {
       color: TPAL_A.textMute,
       fontFamily: 'DM Mono',
       fontSize: 11
     }
-  }, mode === 'manual' ? 'Sin notas. Click [+] en cualquier línea del EERR.' : 'Sin datos para el período.'), filled.map(([k, v]) => /*#__PURE__*/React.createElement("div", {
-    key: k
+  }, "Sin datos para el per\xEDodo."), aiEntries.map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+    key: k,
+    style: {
+      borderLeft: `2px solid ${TPAL_A.cyan}22`,
+      paddingLeft: 10
+    }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: 'DM Mono',
-      fontSize: 9.5,
-      color: TPAL_A.amber,
+      fontSize: 9,
+      color: TPAL_A.cyan,
       letterSpacing: 0.8,
-      marginBottom: 5
+      marginBottom: 4
     }
   }, LINE_LABELS[k] || k.toUpperCase()), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: 'DM Sans',
-      fontSize: 12.5,
+      fontSize: 12,
       color: TPAL_A.text,
       lineHeight: 1.6
     }
-  }, v)))));
+  }, v))))), tab === 'cfo' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '6px 12px',
+      fontFamily: 'DM Mono',
+      fontSize: 9,
+      color: TPAL_A.textMute,
+      borderBottom: `1px solid ${TPAL_A.border}`,
+      letterSpacing: 0.4
+    }
+  }, "Editorial \xB7 Click [+] en tabla EERR para agregar"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '12px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12,
+      maxHeight: 400,
+      overflowY: 'auto'
+    }
+  }, cfoEntries.length === 0 && /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: TPAL_A.textMute,
+      fontFamily: 'DM Mono',
+      fontSize: 11
+    }
+  }, "Sin notas. Click [+] en cualquier l\xEDnea del EERR."), cfoEntries.map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+    key: k,
+    style: {
+      borderLeft: `2px solid ${TPAL_A.amber}44`,
+      paddingLeft: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: 'DM Mono',
+      fontSize: 9,
+      color: TPAL_A.amber,
+      letterSpacing: 0.8,
+      marginBottom: 4,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
+    }
+  }, LINE_LABELS[k] || k.toUpperCase(), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setEditingKey(k),
+    style: {
+      background: 'transparent',
+      border: `1px solid ${TPAL_A.border}`,
+      color: TPAL_A.textMute,
+      fontFamily: 'DM Mono',
+      fontSize: 8,
+      padding: '1px 5px',
+      cursor: 'pointer'
+    }
+  }, "editar"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setComments({
+      ...comments,
+      [k]: ''
+    }),
+    style: {
+      background: 'transparent',
+      border: `1px solid ${TPAL_A.border}`,
+      color: TPAL_A.red,
+      fontFamily: 'DM Mono',
+      fontSize: 8,
+      padding: '1px 5px',
+      cursor: 'pointer'
+    }
+  }, "\xD7")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: 'DM Sans',
+      fontSize: 12,
+      color: TPAL_A.text,
+      lineHeight: 1.6
+    }
+  }, v)))), editingKey && /*#__PURE__*/React.createElement(CommentEditor, {
+    line: editingKey,
+    value: comments[editingKey] || '',
+    onSave: v => {
+      setComments({
+        ...comments,
+        [editingKey]: v
+      });
+      setEditingKey(null);
+    },
+    onClose: () => setEditingKey(null)
+  })));
 }
 function ExportPanel({
   currency,
