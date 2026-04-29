@@ -4019,7 +4019,9 @@ function CostoDrillPanel({
   const [expanded, setExpanded] = useStateA({
     mp: true,
     mo: false,
-    cf: false
+    cf: false,
+    adm: true,
+    dist: false
   });
   const det = DA.COSTO_DETALLE;
   const months = scope === 'mes' ? ['2026-03'] : DA.months2026Real;
@@ -4612,7 +4614,558 @@ function CostoDrillPanel({
     style: {
       color: TPAL_A.text
     }
-  }, ((det.totals.mp.mes + det.totals.mo.mes + det.totals.cf.mes) * 1000 / 7058).toFixed(0), " USD/ton"), "\xB7 vs Ppto 811 USD/ton \xB7 El menor costo unitario diluye el costo fijo gracias al volumen sobreejecutado."));
+  }, ((det.totals.mp.mes + det.totals.mo.mes + det.totals.cf.mes) * 1000 / 7058).toFixed(0), " USD/ton"), "\xB7 vs Ppto 811 USD/ton \xB7 El menor costo unitario diluye el costo fijo gracias al volumen sobreejecutado."), (() => {
+    const gaCats = [{
+      k: 'adm',
+      label: 'ADMINISTRACIÓN',
+      color: '#a78bfa',
+      items: det.adm,
+      total: det.totals.adm
+    }, {
+      k: 'dist',
+      label: 'DISTRIBUCIÓN',
+      color: '#67e8f9',
+      items: det.dist,
+      total: det.totals.dist
+    }];
+    const gaGrandReal = gaCats.reduce((a, c) => a + (scope === 'mes' ? c.total.mes : c.total.ytdReal), 0);
+    const gaGrandPpto = gaCats.reduce((a, c) => a + (scope === 'mes' ? c.total.ppto : c.total.ytdPpto), 0);
+    const gaGrandLY = gaCats.reduce((a, c) => a + c.total.ly, 0);
+    const gaGrandYtd25 = gaCats.reduce((a, c) => a + (c.total.ytd25 || 0), 0);
+    const fmtGA = v => FA.fmtMoney(v, currency, scope === 'mes' ? ['2026-03'] : DA.months2026Real);
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 24
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 14,
+        fontFamily: 'DM Mono',
+        fontSize: 11
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: '#a78bfa',
+        fontWeight: 700
+      }
+    }, '>'), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TPAL_A.text,
+        fontWeight: 600,
+        letterSpacing: 0.6
+      }
+    }, "GASTOS ADM & DISTRIBUCI\xD3N \xB7 DRILL-DOWN"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TPAL_A.textMute
+      }
+    }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TPAL_A.textDim
+      }
+    }, "Fuente: H5ADM \xB7 ", scope === 'mes' ? 'Mar 2026' : 'YTD Ene–Mar 2026')), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: 12,
+        marginBottom: 18
+      }
+    }, gaCats.map(c => {
+      const real = scope === 'mes' ? c.total.mes : c.total.ytdReal;
+      const ppto = scope === 'mes' ? c.total.ppto : c.total.ytdPpto;
+      const v = FA.variance(real, ppto);
+      const ref = scope === 'mes' ? c.total.ly : c.total.ytd25 || 0;
+      const vRef = FA.variance(real, ref);
+      return /*#__PURE__*/React.createElement("div", {
+        key: c.k,
+        style: {
+          background: TPAL_A.panel,
+          border: `1px solid ${TPAL_A.border}`,
+          padding: 14
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          marginBottom: 8
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          width: 8,
+          height: 8,
+          background: c.color
+        }
+      }), /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: c.color,
+          fontFamily: 'DM Mono',
+          fontSize: 10,
+          letterSpacing: 0.8,
+          fontWeight: 700
+        }
+      }, c.label)), /*#__PURE__*/React.createElement("div", {
+        style: {
+          fontFamily: 'DM Mono',
+          fontSize: 22,
+          color: TPAL_A.text,
+          fontWeight: 600,
+          marginBottom: 4
+        }
+      }, fmtGA(real)), /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontFamily: 'DM Mono',
+          fontSize: 10.5
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: TPAL_A.textDim
+        }
+      }, "vs Ppto"), /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: v.abs <= 0 ? TPAL_A.green : TPAL_A.red
+        }
+      }, FA.fmtPct(v.pct, 1, true))), /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontFamily: 'DM Mono',
+          fontSize: 10.5,
+          marginTop: 3
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: TPAL_A.textDim
+        }
+      }, scope === 'mes' ? 'vs Mar 2025' : 'vs YTD 2025'), /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: vRef.abs <= 0 ? TPAL_A.green : TPAL_A.red
+        }
+      }, FA.fmtPct(vRef.pct, 1, true))));
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: TPAL_A.panel2,
+        border: `1px solid #7c3aed55`,
+        padding: 14
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 8,
+        height: 8,
+        background: '#a78bfa'
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: '#a78bfa',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        letterSpacing: 0.8,
+        fontWeight: 700
+      }
+    }, "TOTAL G&A")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: 'DM Mono',
+        fontSize: 22,
+        color: '#a78bfa',
+        fontWeight: 700,
+        marginBottom: 4
+      }
+    }, fmtGA(gaGrandReal)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        fontFamily: 'DM Mono',
+        fontSize: 10.5
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TPAL_A.textDim
+      }
+    }, "vs Ppto"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: gaGrandReal <= gaGrandPpto ? TPAL_A.green : TPAL_A.red
+      }
+    }, FA.fmtPct((gaGrandReal - gaGrandPpto) / gaGrandPpto, 1, true))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        fontFamily: 'DM Mono',
+        fontSize: 10.5,
+        marginTop: 3
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TPAL_A.textDim
+      }
+    }, scope === 'mes' ? 'vs Mar 2025' : 'vs YTD 2025'), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: gaGrandReal <= (scope === 'mes' ? gaGrandLY : gaGrandYtd25) ? TPAL_A.green : TPAL_A.red
+      }
+    }, FA.fmtPct((gaGrandReal - (scope === 'mes' ? gaGrandLY : gaGrandYtd25)) / (scope === 'mes' ? gaGrandLY : gaGrandYtd25), 1, true))))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: TPAL_A.panel,
+        border: `1px solid ${TPAL_A.border}`
+      }
+    }, /*#__PURE__*/React.createElement("table", {
+      style: {
+        width: '100%',
+        borderCollapse: 'collapse'
+      }
+    }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+      style: {
+        background: TPAL_A.panel2
+      }
+    }, /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'left',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: TPAL_A.textMute,
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500,
+        width: '40%'
+      }
+    }, "\xCDTEM"), /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: TPAL_A.textMute,
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500
+      }
+    }, "REAL"), /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: TPAL_A.textMute,
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500
+      }
+    }, "PPTO"), /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: '#a78bfa',
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500
+      }
+    }, "VAR"), /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: '#a78bfa',
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500
+      }
+    }, "VAR %"), scope === 'mes' && /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: TPAL_A.textMute,
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500
+      }
+    }, "FEB 2026"), /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: TPAL_A.textMute,
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500,
+        minWidth: 72
+      }
+    }, scope === 'mes' ? 'MAR 2025' : 'YTD 2025'), /*#__PURE__*/React.createElement("th", {
+      style: {
+        padding: '10px 14px',
+        textAlign: 'right',
+        fontFamily: 'DM Mono',
+        fontSize: 10,
+        color: TPAL_A.textMute,
+        letterSpacing: 0.8,
+        borderBottom: `1px solid ${TPAL_A.borderHi}`,
+        fontWeight: 500,
+        width: '12%'
+      }
+    }, "% CAT"))), /*#__PURE__*/React.createElement("tbody", null, gaCats.map(c => {
+      const isOpen = expanded[c.k];
+      const catReal = scope === 'mes' ? c.total.mes : c.total.ytdReal;
+      const catPpto = scope === 'mes' ? c.total.ppto : c.total.ytdPpto;
+      const catRef = scope === 'mes' ? c.total.ly : c.total.ytd25 || 0;
+      const v = FA.variance(catReal, catPpto);
+      return /*#__PURE__*/React.createElement(React.Fragment, {
+        key: c.k
+      }, /*#__PURE__*/React.createElement("tr", {
+        style: {
+          background: TPAL_A.panel2,
+          cursor: 'pointer'
+        },
+        onClick: () => setExpanded({
+          ...expanded,
+          [c.k]: !isOpen
+        })
+      }, /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          fontFamily: 'DM Mono',
+          fontSize: 11.5,
+          color: c.color,
+          fontWeight: 700,
+          letterSpacing: 0.5,
+          borderBottom: `1px solid ${TPAL_A.borderHi}`
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          display: 'inline-block',
+          width: 14,
+          color: c.color
+        }
+      }, isOpen ? '▾' : '▸'), c.label, " ", /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: TPAL_A.textDim,
+          fontWeight: 400,
+          marginLeft: 8
+        }
+      }, "(", c.items.length, ")")), /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12.5,
+          color: c.color,
+          fontWeight: 700,
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, fmtGA(catReal)), /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12,
+          color: TPAL_A.textDim,
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, fmtGA(catPpto)), /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12,
+          color: sigCls(v.abs),
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, (v.abs >= 0 ? '+' : '') + fmtGA(v.abs).replace('+', '')), /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12,
+          color: sigCls(v.abs),
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums',
+          fontWeight: 600
+        }
+      }, FA.fmtPct(v.pct, 1, true)), scope === 'mes' && /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12,
+          color: TPAL_A.textDim,
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, "\u2014"), /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12,
+          color: TPAL_A.textDim,
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, fmtGA(catRef)), /*#__PURE__*/React.createElement("td", {
+        style: {
+          padding: '11px 14px',
+          textAlign: 'right',
+          fontFamily: 'DM Mono',
+          fontSize: 12,
+          color: TPAL_A.textDim,
+          borderBottom: `1px solid ${TPAL_A.borderHi}`,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, "100%")), isOpen && c.items.map(it => {
+        const real = scope === 'mes' ? it.mes : it.ytdReal;
+        const ppto = scope === 'mes' ? it.ppto : it.ytdPpto;
+        const ref = scope === 'mes' ? it.ly : it.ytd25 || 0;
+        const vi = FA.variance(real, ppto);
+        const pctCat = catReal !== 0 ? Math.abs(real) / Math.abs(catReal) : 0;
+        const isNeg = it.name.includes('ajuste') || real < 0;
+        return /*#__PURE__*/React.createElement("tr", {
+          key: c.k + '-' + it.name,
+          style: {
+            borderBottom: `1px solid ${TPAL_A.border}`,
+            opacity: isNeg ? 0.7 : 1
+          }
+        }, /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px 8px 36px',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: isNeg ? TPAL_A.textMute : TPAL_A.text,
+            fontStyle: isNeg ? 'italic' : 'normal'
+          }
+        }, it.name), /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: real < 0 ? TPAL_A.textMute : TPAL_A.text,
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, fmtGA(real)), /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: TPAL_A.textDim,
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, ppto !== 0 ? fmtGA(ppto) : '—'), /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: isNeg ? TPAL_A.textMute : sigCls(vi.abs),
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, isNeg ? '—' : (vi.abs >= 0 ? '+' : '') + fmtGA(vi.abs).replace('+', '')), /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: isNeg ? TPAL_A.textMute : sigCls(vi.abs),
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, isNeg ? '—' : ppto !== 0 ? FA.fmtPct(vi.pct, 1, true) : '—'), scope === 'mes' && /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: TPAL_A.textDim,
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, fmtGA(it.mesAnt)), /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: TPAL_A.textDim,
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, ref !== 0 ? fmtGA(ref) : '—'), /*#__PURE__*/React.createElement("td", {
+          style: {
+            padding: '8px 14px',
+            textAlign: 'right',
+            fontFamily: 'DM Mono',
+            fontSize: 11.5,
+            color: TPAL_A.textDim,
+            fontVariantNumeric: 'tabular-nums'
+          }
+        }, !isNeg && /*#__PURE__*/React.createElement("div", {
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            justifyContent: 'flex-end'
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: {
+            width: 60,
+            height: 5,
+            background: TPAL_A.bg,
+            position: 'relative'
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%',
+            width: Math.min(100, pctCat * 100) + '%',
+            background: c.color,
+            opacity: 0.6
+          }
+        })), /*#__PURE__*/React.createElement("span", {
+          style: {
+            minWidth: 36,
+            textAlign: 'right'
+          }
+        }, FA.fmtPct(pctCat, 1)))));
+      }));
+    })))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 10,
+        padding: '10px 14px',
+        background: TPAL_A.panel,
+        border: `1px solid ${TPAL_A.border}`,
+        fontFamily: 'DM Mono',
+        fontSize: 11,
+        color: TPAL_A.textDim,
+        lineHeight: 1.6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: '#a78bfa',
+        fontWeight: 700,
+        marginRight: 8
+      }
+    }, "NOTA"), "Fuente: hoja H5ADM del Excel de gesti\xF3n. Administraci\xF3n (c\xF3d. 6101) incluye remuneraciones, beneficios e infraestructura corporativa. Distribuci\xF3n (c\xF3d. 6102) incluye fletes y gastos comerciales por producto/mercado.", ' ', /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TPAL_A.textMute
+      }
+    }, "\xB7 \"Otros y ajustes\" incorpora partidas menores y cr\xE9ditos internos.")));
+  })());
 }
 
 // ─── Sensibilidad TC ────────────────────────────────────────────────────

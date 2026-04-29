@@ -818,6 +818,31 @@ const COSTO_DETALLE = {
       "ytdPpto": 148
     }
   ],
+  // ─── Gastos de Distribución (H5ADM) — kUSD · Mar 2026 (último mes cerrado)
+  // Fuente: hoja H5ADM, sección Gastos de Distribución (6102xxx)
+  // ytd25 = Ene-Mar 2025 acumulado
+  "dist": [
+    { "name": "Gastos Venta Á. Bórico",       "mes": 102, "mesAnt": 144, "ppto": 41,  "ly": 75,  "ytdReal": 265, "ytdPpto": 124, "ytd25": 200 },
+    { "name": "Gastos Venta Ulexita",           "mes": 2,   "mesAnt": 3,   "ppto": 0,   "ly": 0,   "ytdReal": 5,   "ytdPpto": 0,   "ytd25": 0   },
+    { "name": "Gastos Venta Ext. Á. Bórico USD","mes": 69,  "mesAnt": 26,  "ppto": 77,  "ly": 46,  "ytdReal": 129, "ytdPpto": 216, "ytd25": 136 },
+    { "name": "Gastos Venta Granulex",          "mes": 0,   "mesAnt": 2,   "ppto": 0,   "ly": 22,  "ytdReal": 4,   "ytdPpto": 0,   "ytd25": 80  },
+    { "name": "Gastos Venta Ext. Granulex USD", "mes": 6,   "mesAnt": 6,   "ppto": 0,   "ly": 0,   "ytdReal": 18,  "ytdPpto": 0,   "ytd25": 19  }
+  ],
+  // ─── Gastos de Administración (H5ADM) — kUSD · Mar 2026 (último mes cerrado)
+  // Fuente: hoja H5ADM, sección Gastos de Administración (6101xxx)
+  // Incluye las partidas principales; "Otros y ajustes" cierra la diferencia hasta el total de sección
+  "adm": [
+    { "name": "Remuneraciones Administración",   "mes": 417, "mesAnt": 417, "ppto": 407, "ly": 451, "ytdReal": 1271, "ytdPpto": 1217, "ytd25": 1275 },
+    { "name": "Indemnización Años Servicio",      "mes": 82,  "mesAnt": 84,  "ppto": 119, "ly": 10,  "ytdReal": 216,  "ytdPpto": 356,  "ytd25": 185  },
+    { "name": "Gastos Generales Administración",  "mes": 124, "mesAnt": 84,  "ppto": 170, "ly": 162, "ytdReal": 282,  "ytdPpto": 477,  "ytd25": 466  },
+    { "name": "Costos Capacidad Ociosa",          "mes": 52,  "mesAnt": 48,  "ppto": 58,  "ly": 36,  "ytdReal": 164,  "ytdPpto": 181,  "ytd25": 102  },
+    { "name": "Impuestos y Contribuciones",       "mes": 36,  "mesAnt": 0,   "ppto": 55,  "ly": 56,  "ytdReal": 268,  "ytdPpto": 342,  "ytd25": 242  },
+    { "name": "Bono Término Negociación",         "mes": 40,  "mesAnt": 44,  "ppto": 43,  "ly": 44,  "ytdReal": 128,  "ytdPpto": 129,  "ytd25": 129  },
+    { "name": "Arriendos",                        "mes": 28,  "mesAnt": 38,  "ppto": 30,  "ly": 55,  "ytdReal": 119,  "ytdPpto": 128,  "ytd25": 144  },
+    { "name": "Mantención & Soporte TI",          "mes": 15,  "mesAnt": 14,  "ppto": 11,  "ly": 15,  "ytdReal": 41,   "ytdPpto": 35,   "ytd25": 40   },
+    { "name": "Seguros",                          "mes": 13,  "mesAnt": 14,  "ppto": 14,  "ly": 16,  "ytdReal": 53,   "ytdPpto": 42,   "ytd25": 49   },
+    { "name": "Otros y ajustes",                  "mes": -114,"mesAnt": -133,"ppto": -10, "ly": -63, "ytdReal": -243, "ytdPpto": -15,  "ytd25": -237 }
+  ],
   "totals": {
     "mp": {
       "mes": 2957,
@@ -839,6 +864,22 @@ const COSTO_DETALLE = {
       "ly": 1800,
       "ytdReal": 5244,
       "ytdPpto": 20899
+    },
+    "adm": {
+      "mes": 693,
+      "ppto": 897,
+      "ly": 782,
+      "ytdReal": 2299,
+      "ytdPpto": 2892,
+      "ytd25": 2395
+    },
+    "dist": {
+      "mes": 179,
+      "ppto": 118,
+      "ly": 143,
+      "ytdReal": 421,
+      "ytdPpto": 340,
+      "ytd25": 435
     }
   }
 };
